@@ -1,0 +1,14 @@
+{
+    "name": "tsCMS/ShopBundle",
+    "autoload": {
+        "psr-0" : {
+            "tsCMS\\ShopBundle" : "src"
+        }
+    },
+    "require": {
+        "tsCMS/SystemBundle": "*",
+        "tsCMS/TemplateBundle": "*",
+        "tsCMS/FileManagerBundle": "*",
+        "symfony/finder": "*"
+    }
+}
