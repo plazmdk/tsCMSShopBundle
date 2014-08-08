@@ -1,0 +1,25 @@
+{% extends 'tsCMSSystemBundle::layout.html.twig' %}
+{% block title %}{{ "categories"|trans }}{% endblock %}
+{% block content %}
+    <a href="{{ path("tscms_shop_category_create") }}" class="btn btn-primary">{{ "category.create"|trans }}</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>{{ "vatgroup.title"|trans }}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+                <tr>
+                    <td>{{ category.title }}</td>
+                    <td>
+                        <a href="{{ path("tscms_shop_category_edit", {id:category.id}) }}">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

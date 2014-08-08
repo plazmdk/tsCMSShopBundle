@@ -1,0 +1,12 @@
+<tr>
+    <td class="title">{{ item.title }}</td>
+    <td class="amount">
+        {% if noInput is defined %}
+            {{ item.amount }}
+        {% else %}
+            <input type="number" min="0" step="1" name="amounts[{{ key }}]" value="{{ item.amount }}"/>
+        {% endif %}
+    </td>
+    <td class="price">{{ item|currency }}</td>
+    <td class="price">{{ item|currency(true) }}</td>
+</tr>

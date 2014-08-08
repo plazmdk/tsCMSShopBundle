@@ -1,0 +1,11 @@
+{% extends '::base.html.twig' %}
+{% block title %}
+    {{ productlist.title }}
+{% endblock %}
+{% block body %}
+    <h1>{{ productlist.title }}</h1>
+    {% for product in products %}
+        <b><a href="{{ product.path }}">{{ product.title }}</a></b>
+        <br/>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends '::base.html.twig' %}
+{% block title %}
+    {{ product.title }}
+{% endblock %}
+{% block body %}
+    <h1>{{ product.title }}</h1>
+    {{ product.description|raw }}
+
+    {{ product|currency }}
+    {{ form(buy_form) }}
+{% endblock %}

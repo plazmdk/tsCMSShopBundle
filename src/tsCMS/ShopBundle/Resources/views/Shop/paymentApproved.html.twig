@@ -1,0 +1,20 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Godkendt{% endblock %}
+
+{% block body %}
+    <div class="grid-container">
+        <div class="grid-100">
+            <h1>Ordre bestilt</h1>
+            <b>Dit ordrenr: {{ order.id }}</b>
+            <br/>
+            <br/>
+        </div>
+    </div>
+    {% include "tsCMSShopBundle:Shop:orderView.html.twig" with {order:order} %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    
+{% endblock %}

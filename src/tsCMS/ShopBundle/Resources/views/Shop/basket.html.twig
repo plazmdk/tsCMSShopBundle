@@ -1,0 +1,35 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}{{ "basket.title"|trans }}{% endblock %}
+
+{% block body %}
+    <form method="post" action="">
+
+        <h1>{{ "basket.title"|trans }}</h1>
+
+        <table class="basket">
+            <thead>
+                <tr>
+                    <th>{{ "product.title"|trans }}</th>
+                    <th>{{ "basket.amount"|trans }}</th>
+                    <th class="price">{{ "basket.pricePerUnit"|trans }}</th>
+                    <th class="price">{{ "basket.price"|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key,item in basket.items %}
+                    {% include "tsCMSShopBundle:Shop:item.html.twig" with {key: key, item: item} %}
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3"></td>
+                    <td class="price total">{{ basket|currency }}</td>
+                </tr>
+            </tfoot>
+        </table>
+        <input type="submit" value="{{ "basket.save"|trans }}"/>
+        <a href="{{ path("checkout") }}">Til kassen</a>
+    </form>
+{% endblock %}
+

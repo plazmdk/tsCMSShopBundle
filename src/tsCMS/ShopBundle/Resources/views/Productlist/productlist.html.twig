@@ -1,0 +1,49 @@
+{% extends 'tsCMSSystemBundle::layout.html.twig' %}
+{% block title %}{{ "productlist.title"|trans }}{% endblock %}
+{% block content %}
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="box box-blue">
+                <div class="box-header">
+                    <div class="box-title">
+                        {{ "productlist.information"|trans }}
+                    </div>
+                </div>
+                <div class="box-body">
+                    {{ form_row(form.title) }}
+                    {{ form_row(form.path) }}
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="box-header">
+                    <div class="box-title">
+                        {{ "productlist.search"|trans }}
+                    </div>
+                </div>
+                <div class="box-body">
+                    {{ form_row(form.categories) }}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="box">
+                <div class="box-header">
+                    <div class="box-title">
+                        {{ "productlist.singleProducts"|trans }}
+                    </div>
+                </div>
+                <div class="box-body">
+                    {{ form_row(form.singleProducts) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+
+{% endblock %}

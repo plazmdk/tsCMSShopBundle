@@ -1,0 +1,62 @@
+<div class="grid-container">
+    <div class="grid-33">
+        <b>Kundedetaljer</b><br/>
+        {{ order.customerDetails.name }}<br/>
+        {{ order.customerDetails.address }}<br/>
+        {% if order.customerDetails.address2 %}
+            {{ order.customerDetails.address2 }}<br/>
+        {% endif %}
+        {{ order.customerDetails.postalcode }}
+        {{ order.customerDetails.city }}<br/>
+        {{ order.customerDetails.country }}<br/>
+        <br/>
+        {{ order.customerDetails.phone }}<br/>
+        {{ order.customerDetails.email }}
+    </div>
+    <div class="grid-33">
+        {% if order.shipmentDetails %}
+            <b>Leveringsdetaljer</b>
+            {{ order.shipmentDetails.name }}<br/>
+            {{ order.shipmentDetails.address }}<br/>
+            {% if order.shipmentDetails.address2 %}
+                {{ order.shipmentDetails.address2 }}<br/>
+            {% endif %}
+            {{ order.shipmentDetails.postalcode }}
+            {{ order.shipmentDetails.city }}<br/>
+            {{ order.shipmentDetails.country }}<br/>
+            <br/>
+            {{ order.shipmentDetails.phone }}<br/>
+            {{ order.shipmentDetails.email }}
+        {% endif %}
+        &nbsp;
+    </div>
+    <div class="grid-33" style="text-align: right;">
+        <b>Sælger</b>
+    </div>
+</div>
+<br/>
+<div class="grid-container">
+    <div class="grid-100">
+        <table class="basket">
+            <thead>
+            <tr>
+                <th>{{ "product.title"|trans }}</th>
+                <th>{{ "basket.amount"|trans }}</th>
+                <th class="price">{{ "basket.pricePerUnit"|trans }}</th>
+                <th class="price">{{ "basket.price"|trans }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for key,item in order.lines %}
+                {% include "tsCMSShopBundle:Shop:item.html.twig" with {key: key, item: item, noInput: true} %}
+            {% endfor %}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="3"></td>
+                <td class="price total">{{ order|currency }}</td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

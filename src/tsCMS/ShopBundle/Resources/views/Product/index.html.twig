@@ -1,0 +1,29 @@
+{% extends 'tsCMSSystemBundle::layout.html.twig' %}
+{% block title %}{{ "products"|trans }}{% endblock %}
+{% block content %}
+    <a href="{{ path("tscms_shop_product_create") }}" class="btn btn-primary">{{ "product.create"|trans }}</a>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>{{ "product.title"|trans }}</th>
+                <th>{{ "product.partnumber"|trans }}</th>
+                <th>{{ "product.inventory"|trans }}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.title }}</td>
+                    <td>{{ product.partnumber }}</td>
+                    <td>{{ product.inventory }}</td>
+                    <td>
+                        <a href="{{ path("tscms_shop_product_edit", {id: product.id}) }}">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

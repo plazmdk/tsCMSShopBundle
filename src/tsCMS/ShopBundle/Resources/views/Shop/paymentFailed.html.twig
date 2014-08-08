@@ -1,0 +1,20 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Fejlet{% endblock %}
+
+{% block body %}
+    <div class="grid-container">
+        <div class="grid-100">
+            <h1>Betalingen fejlede</h1>
+            <a href="{{ confirmLink }}">Forsøg igen</a>
+            <br/>
+            <br/>
+        </div>
+    </div>
+    {% include "tsCMSShopBundle:Shop:orderView.html.twig" with {order:order} %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    
+{% endblock %}

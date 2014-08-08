@@ -1,0 +1,138 @@
+{% extends 'tsCMSSystemBundle::layout.html.twig' %}
+{% block title %}{{ "paymentmethods"|trans }}{% endblock %}
+{% block content %}
+    <div class="col-lg-9">
+        {{ form_start(paymentForm) }}
+        <div class="well">
+            <div style="min-height: 80px;" id="paymentMethods">
+                {% for index,paymentMethod in paymentMethods %}
+                    <div class="box box-solid">
+                        <div class="box-header">
+                            <a href="#" class="close" style="margin: 5px;">
+                                <i class="fa fa-times"></i>
+                            </a>
+                            <div class="box-title">
+                                <span>{{ paymentMethod.method.title }} - </span>
+                                {{ paymentMethod.gateway.name|trans }}
+                                {{ form_widget(paymentForm[index].enabled) }}
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <div class="optionform">
+                                <a class="fa fa-toggle-down toggleOptions" href="#"> {{ "paymentmethod.toggleOptions"|trans }}</a>
+                                <div style="display: none;">
+                                    {{ form_widget(paymentForm[index]) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <input type="submit" class="btn btn-primary" value="{{ "paymentmethod.save"|trans }}"/>
+        {{ form_end(paymentForm) }}
+    </div>
+    <div class="col-lg-3" id="availableGateways">
+        {% for availableGateway in availableGateways %}
+            <div class="box box-solid bg-light-blue">
+                <a href="#" class="close" style="display: none;margin: 5px;">
+                    <i class="fa fa-times"></i>
+                </a>
+                <div class="box-header">
+                    <div class="box-title">
+                        <span></span>
+                        {{ availableGateway.gateway.name|trans }}
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="description">
+                        {{ availableGateway.gateway.description|trans }}
+                    </div>
+                    <div class="optionform" style="display: none;">
+                        <a class="fa fa-toggle-down toggleOptions" href="#"> {{ "paymentmethod.toggleOptions"|trans }}</a>
+                        <div style="display: none;">
+                            {{ form_widget(availableGateway.optionForm._P_) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts 'bundles/tscmsshop/js/shop.js' %}
+    <script src="{{ asset_url }}" type="text/javascript"></script>
+    {% endjavascripts %}
+    <script type="text/javascript">
+        $("#availableGateways").find(".box").draggable({
+            connectToSortable: "#paymentMethods",
+            helper: "clone"
+        });
+
+        var paymentMethods = $("#paymentMethods");
+        paymentMethods.sortable({
+            handle: '.box-header',
+            over: function( event, ui ) {
+                $(ui.helper).removeClass("bg-light-blue");
+            },
+            receive: function (event, ui ) {
+                var all = paymentMethods.find(".box");
+                var item = all.filter(function() {
+                    var result = false;
+                    $(this).find("input,textarea,select,button").each(function() {
+                        var field = $(this);
+                        if (field.attr("name").indexOf("_P_") != -1) {
+                            result = result || true;
+                        }
+                    });
+                    return result;
+                });
+                item.removeClass("bg-light-blue");
+                item.find(".close").show();
+                item.find(".description").hide();
+                item.find(".optionform").show();
+                var count = all.length;
+                item.find("input,textarea,select,button").each(function() {
+                    var field = $(this);
+                    field.attr("name", field.attr("name").replace("_P_", count));
+                    field.attr("id", field.attr("id").replace("_P_", count));
+                });
+                item.find("div").each(function() {
+                    var box = $(this);
+                    if (box.attr("id")) {
+                        box.attr("id", box.attr("id").replace("_P_", count));
+                    }
+                });
+                item.find("label").each(function() {
+                    var label = $(this);
+                    if (label.attr("for")) {
+                        label.attr("for", label.attr("for").replace("_P_", count));
+                    }
+                });
+            },
+            stop: function( event, ui ) {
+                paymentMethods.find(".box").each(function(index) {
+                    var method = $(this);
+                    method.find("input[name$='[position]']").val(index);
+                });
+            }
+        });
+        paymentMethods.on("click",".close",function() {
+            var closeButton = $(this);
+            closeButton.closest(".box").remove();
+            paymentMethods.find(".box").each(function(index) {
+                var method = $(this);
+                method.find("input[name$='[position]']").val(index);
+            });
+        });
+
+        $(document).on("click", ".toggleOptions", function() {
+            var toggle = $(this);
+            toggle.next().slideToggle();
+            toggle.toggleClass("fa-toggle-down").toggleClass("fa-toggle-up");
+            return false;
+        });
+    </script>
+{% endblock %}

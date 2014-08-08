@@ -1,0 +1,38 @@
+{% extends 'tsCMSSystemBundle::layout.html.twig' %}
+{% block title %}{{ "config.title"|trans }}{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-6">
+            {{ form_start(form) }}
+                <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#generel" data-toggle="tab">{{ "config.generel"|trans }}</a></li>
+                        <li><a href="#urls" data-toggle="tab">{{ "config.urls"|trans }}</a></li>
+                        <li><a href="#templates" data-toggle="tab">{{ "config.templates"|trans }}</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="generel">
+                            {{ form_row(form.shopName) }}
+                            {{ form_row(form.shopEmail) }}
+                        </div>
+                        <div class="tab-pane" id="urls">
+                            {{ form_row(form.productUrl) }}
+                            {{ form_row(form.basketUrl) }}
+                            {{ form_row(form.checkoutUrl) }}
+                            {{ form_row(form.selectShipmentUrl) }}
+                            {{ form_row(form.selectPaymentUrl) }}
+                            {{ form_row(form.confirmOrderUrl) }}
+                            {{ form_row(form.approvedPaymentUrl) }}
+                            {{ form_row(form.failedPaymentUrl) }}
+                            {{ form_row(form.paymentCallbackUrl) }}
+                        </div>
+                        <div class="tab-pane" id="templates">
+                            {{ form_row(form.orderConfirmationTemplate) }}
+                            {{ form_row(form.orderInvoiceTemplate) }}
+                        </div>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

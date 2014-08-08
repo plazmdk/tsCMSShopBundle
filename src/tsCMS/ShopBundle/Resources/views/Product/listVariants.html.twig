@@ -1,0 +1,49 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">{{ "product.listvariants"|trans }}</h4>
+</div>
+<div class="modal-body">
+    <form id="createVariantsForm" method="post" action="{{ path("tscms_shop_product_createvariants", {id: product.id}) }}">
+        <div class="row">
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th style="width:20px;"></th>
+                        <th colspan="2">{{ "variant.title" }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for variant in variants %}
+                        <tr class="variant">
+                            <td>
+                                <input id="variant{{ variant.id }}" type="checkbox" name="variant[]" value="{{ variant.id }}"/>
+                            </td>
+                            <td colspan="2">
+                                <label for="variant{{ variant.id }}">
+                                    {{ variant.title }} ({{ variant.displayTitle }})
+                                </label>
+                            </td>
+                        </tr>
+                        {% for variantoption in variant.options %}
+                            <tr>
+                                <td></td>
+                                <td style="width:20px;">
+                                    <input id="variantoption{{ variantoption.id }}" type="checkbox" name="variantoption[{{ variant.id }}][]" value="{{ variantoption.id }}"/>
+                                </td>
+                                <td>
+                                    <label for="variantoption{{ variantoption.id }}">
+                                        {{ variantoption.title }} ({{ variantoption.displayTitle }})
+                                    </label>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <input type="submit" value="{{ "product.createvariants"|trans }}" class="btn btn-primary"/>
+    </form>
+</div>
+{% javascripts 'bundles/tscmsshop/js/variant.js' %}
+    <script src="{{ asset_url }}" type="text/javascript"></script>
+{% endjavascripts %}

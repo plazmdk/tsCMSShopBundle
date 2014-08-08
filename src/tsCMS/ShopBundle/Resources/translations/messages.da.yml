@@ -1,0 +1,198 @@
+products: Varer
+product:
+  create: Opret produkt
+  edit: Rediger
+  information: Produktinformation
+  title: Produktnavn
+  path: URL
+  partnumber: Varenr.
+  description: Beskrivelse
+  inventory: Lagerstatus
+  disabled: Deaktiver vare
+  priceconfiguration: Prisopsætning
+  price: Pris ekskl. moms
+  priceVat: Pris inkl. moms
+  vatGroup: Momsgruppe
+
+  freight: Fragt
+
+  categories: Kategorier
+
+  images: Billeder
+  addimages: Tilføj billeder
+  variants: Produktvarianter
+  createvariants: Opret varianter
+  listvariants: Tilgængelige varianter
+  save: Gem
+
+variants: Variantmuligheder
+variant:
+  create: Opret variant
+  edit: Rediger
+  title: Navn
+  displayTitle: Visningsnavn
+  options: Varianter
+  save: Gem
+
+variantoption:
+  title: Navn
+  displayTitle: Visningsnavn
+
+vatgroups: Momsgrupper
+vatgroup:
+  create: Opret momsgruppe
+  edit: Rediger
+  title: Navn
+  percentage: Momsprocent
+  save: Gem
+
+config:
+  title: Indstillinger
+
+  generel: Generelt
+
+  shopName: Butiknavn
+  shopEmail: Butiksemail
+
+  urls: URLs
+
+  productUrl: Standard produkt URL - {productId}, {productTitle} og {productVariants} kan bruges til at skabe dynamiske URLs
+  basketUrl: URL til kurven
+  checkoutUrl: URL til checkout flowet
+  selectShipmentUrl: URL til valg af leveringsmetode
+  selectPaymentUrl: URL til valg af betalingsmetode
+  confirmOrderUrl: URL til godkendelse af bestilling
+  approvedPaymentUrl: URL til success betaling
+  failedPaymentUrl: URL til fejlet betaling
+  paymentCallbackUrl: Callback URL til gateways
+
+  templates: Mail skabeloner
+
+  orderConfirmationTemplate: Ordrebekræftelsesmail
+  orderInvoiceTemplate: Fakturamail
+
+
+  save: Gem
+
+basket:
+  title: Kurv
+  pricePerUnit: Pris per stk.
+  price: Pris
+  amount: Antal
+  save: Gem opdateringer
+  buy: Køb
+
+
+productlists: Varelister
+productlist:
+  create: Opret vareliste
+  edit: Rediger
+  information: Information
+  title: Titel
+  path: URL
+
+  search: Søgekriterier
+  singleProducts: Ekstra tilknyttede varer
+  categories: Kategorier
+
+  save: Gem
+
+
+orders: Ordrer
+order:
+  id: Ordrenr
+  title: Ordre
+  customerDetails: Fakturaoplysninger
+  shipmentDetails: Leveringsoplysninger
+  alternativeShipmentDetails: Levering til anden adresse
+  noShipmentDetails: Der vil blive leveret til samme adresse som der faktureres til.
+  shipmentMethod: Leveringsmetode
+  note: Bemærkninger
+  status: Status
+  paymentStatus: Betalingsstatus
+  date: Dato
+  total: Total
+
+  save: Gem
+
+  next: Næste
+  handle: Hæv og afslut
+
+  confirmationTemplate: Ordrebekræftelse
+  invoiceTemplate: Faktura
+
+
+customerDetails:
+  name: Navn
+  address: Adresse
+  address2: Adresse2
+  postalcode: Postnr
+  city: By
+  country: Land
+  email: E-mail
+  phone: Telefon
+
+categories: Kategorier
+category:
+  create: Opret kategori
+  edit: Rediger
+  title: Kategori
+
+  save: Gem
+
+
+paymentmethods: Betalingsmetoder
+paymentmethod:
+  title: Navn
+  description: Beskrivelse
+  enabled: Aktiv
+  gateway: Gateway
+  save: Gem
+  options: Indstillinger
+
+  toggleOptions: Vis/skjul indstillinger
+
+  choose: Vælg betalingsmetode
+
+paymentgateway:
+  plain:
+    name: Ingen integration
+    description: Denne metode er ikke forbundet med nogen indløser, men tillader f.eks. fakturabetaling og kontakt ved afhentning - måder hvor betalingsstatus ikke kan tjekkes automatisk
+
+  quickpay:
+    name: Quickpay
+    description: Integration med Quickpay, dette åbner for betaling med de grænse betalingskort.
+
+    quickpayid: QuickpayId
+    quickpaysecret: MD5 Secret
+    quickpayapi: API key
+    autocapture: Hæv pengene automatisk
+    language: Gatewaysprog
+
+
+orderstatus:
+  received: Modtaget
+  done: Afsluttet
+  rejected: Afvist
+
+paymentstatus:
+  authorized: Reserveret
+  captured: Modtaget
+  no_status: Ukendt
+  subscription: Abb. - uhævet
+  subscription_captured: Abb. - hævet
+  failed: Fejlet
+
+shipmentmethods: Fragtmuligheder
+shipmentmethod:
+  title: Navn
+  description: Beskrivelse
+  enabled: Aktiv
+  save: Gem
+  options: Indstillinger
+  toggleOptions: Vis/skjul indstillinger
+
+shipmentgateway:
+  plain:
+    name: Ingen integration
+    description: Fragtmetoder som ikke er bundet op på en leverandør. Bruges bl.a. til afhentning.

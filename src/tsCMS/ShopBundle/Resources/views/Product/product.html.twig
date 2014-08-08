@@ -1,0 +1,124 @@
+{% extends 'tsCMSSystemBundle::layout.html.twig' %}
+{% block title %}{{ "product.title"|trans }}{% endblock %}
+{% block content %}
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="box box-blue">
+                <div class="box-header">
+                    <div class="box-title">
+                        {{ "product.information"|trans }}
+                    </div>
+                </div>
+                <div class="box-body">
+                    {{ form_row(form.title) }}
+                    {{ form_row(form.path) }}
+                    {{ form_row(form.partnumber) }}
+                    {{ form_row(form.description) }}
+                    {{ form_row(form.inventory) }}
+                    {{ form_row(form.disabled) }}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="box">
+                <div class="box-header">
+                    <div class="box-title">
+                        {{ "product.priceconfiguration"|trans }}
+                    </div>
+                </div>
+                <div class="box-body">
+                    {{ form_row(form.productPrice) }}
+                    {{ form_row(form.productPriceVat) }}
+                    {{ form_row(form.vatGroup) }}
+                </div>
+            </div>
+            <div class="box">
+                <div class="box-header">
+                    <div class="box-title">
+                        {{ "product.freight"|trans }}
+                    </div>
+                </div>
+                <div class="box-body">
+
+                </div>
+            </div>
+            <div class="box">
+                <div class="box-header">
+                    <div class="box-title">
+                        {{ "product.categories"|trans }}
+                    </div>
+                </div>
+                <div class="box-body">
+                    {{ form_row(form.categories) }}
+                </div>
+            </div>
+            <div class="box">
+                <div class="box-header">
+                    <div class="box-title">
+                        {{ "product.images"|trans }}
+                    </div>
+                </div>
+                <div class="box-body">
+                    {{ form_row(form.images) }}
+                    <div id="productimages" class="row">
+                        {% for image in product.images %}
+                            <a href="{{ image.path }}" class="col-sm-2">
+                                <img src="{{ image.path }}" style="width:100%" alt="{{ image.title }}"/>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+
+    {% if product.id == -1 %}
+        {% if product.variants|length == 0 %}
+            <a href="{{ path("tscms_shop_product_listvariants",{id: product.id}) }}" class="btn btn-warning dialog">{{ "product.createvariants"|trans }}</a>
+        {% else %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <div class="box-title">
+                                {{ "product.variants"|trans }}
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <table class="table table-hover table-condensed">
+                                <thead>
+                                    <tr>
+                                        {% for productvariant in product.variants %}
+                                            <th>
+                                                {{ productvariant.variant.title }}
+                                            </th>
+                                        {% endfor %}
+                                        <th>
+                                            {{ "product.inventory"|trans }}
+                                        </th>
+                                        <th>
+                                            {{ "product.price"|trans }}
+                                        </th>
+                                        <th>
+                                            {{ "product.priceVat"|trans }}
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts 'bundles/tscmsshop/js/shop.js' %}
+        <script src="{{ asset_url }}" type="text/javascript"></script>
+    {% endjavascripts %}
+{% endblock %}

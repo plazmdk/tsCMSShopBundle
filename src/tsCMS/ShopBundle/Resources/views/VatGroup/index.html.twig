@@ -1,0 +1,25 @@
+{% extends 'tsCMSSystemBundle::layout.html.twig' %}
+{% block title %}Momsgrupper{% endblock %}
+{% block content %}
+    <a href="{{ path("tscms_shop_vatgroup_create") }}" class="btn btn-primary">{{ "vatgroup.create"|trans }}</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>{{ "vatgroup.title"|trans }}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vatgroup in vatgroups %}
+                <tr>
+                    <td>{{ vatgroup.title }}</td>
+                    <td>
+                        <a href="{{ path("tscms_shop_vatgroup_edit", {id:vatgroup.id}) }}">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

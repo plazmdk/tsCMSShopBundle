@@ -1,0 +1,26 @@
+services:
+    tsCMS_shop.shopservice:
+        class: tsCMS\ShopBundle\Services\ShopService
+        arguments: [ @doctrine.orm.entity_manager, @router, @translator, @session, @service_container ]
+        tags:
+            - { name: kernel.event_listener, event: tsCMS.buildSiteStructure, method: onBuildSitestructure }
+            - { name: kernel.event_listener, event: tsCMS.template.get_template_type, method: onGetTemplateTypesEvent }
+    tsCMS_shop.basketservice:
+        class: tsCMS\ShopBundle\Services\BasketService
+        arguments: [ @session, @event_dispatcher ]
+    tsCMS_shop.paymentservice:
+            class: tsCMS\ShopBundle\Services\PaymentService
+            arguments: [ @doctrine.orm.entity_manager ]
+    tsCMS_shop.shipmentservice:
+        class: tsCMS\ShopBundle\Services\ShipmentService
+        arguments: [ @doctrine.orm.entity_manager ]
+    tsCMS_shop.productLoadListener:
+        class: tsCMS\ShopBundle\EventListener\ProductLoadListener
+        arguments: [@service_container]
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+    tsCMS_shop.twig.basketExtension:
+        class: tsCMS\ShopBundle\Twig\BasketExtension
+        arguments: [ @tsCMS_shop.basketService ]
+        tags:
+            - { name: twig.extension }

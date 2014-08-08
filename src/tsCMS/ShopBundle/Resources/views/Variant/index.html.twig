@@ -1,0 +1,25 @@
+{% extends 'tsCMSSystemBundle::layout.html.twig' %}
+{% block title %}{{ "variants"|trans }}{% endblock %}
+{% block content %}
+    <a href="{{ path("tscms_shop_variant_create") }}" class="btn btn-primary">{{ "variant.create"|trans }}</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>{{ "variant.title"|trans }}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for variant in variants %}
+                <tr>
+                    <td>{{ variant.title }}</td>
+                    <td>
+                        <a href="{{ path("tscms_shop_variant_edit", {id:variant.id}) }}">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

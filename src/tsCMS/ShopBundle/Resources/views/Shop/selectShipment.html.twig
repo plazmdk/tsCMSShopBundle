@@ -1,0 +1,52 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block body %}
+    {{ form_start(orderShipmentForm) }}
+    <div class="row">
+        <div class="grid-100">
+            {{ form_row(orderShipmentForm.shipmentMethod) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="grid-100">
+            <div>
+                <label>
+                    <input type="checkbox" id="alternativeShipmentAddressToggle" value="1"/>
+                    {{ "order.alternativeShipmentDetails"|trans }}
+                </label>
+            </div>
+            <div id="alternativeShipmentAddressNote" class="callout callout-info">
+                {{ "order.noShipmentDetails"|trans }}
+            </div>
+            <div id="alternativeShipmentAddress" style="display: none;">
+                {{ form_row(orderShipmentForm.shipmentDetails) }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="grid-100">
+            {{ form_row(orderShipmentForm.save) }}
+        </div>
+    </div>
+    {{ form_end(orderShipmentForm) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $("#alternativeShipmentAddressToggle").change(function() {
+            var checkbox = $(this);
+            var address = $("#alternativeShipmentAddress");
+            var note = $("#alternativeShipmentAddressNote");
+            if (checkbox.is(":checked")) {
+                address.show();
+                note.hide();
+            } else {
+                address.hide();
+                note.show();
+            }
+        })
+    </script>
+{% endblock %}

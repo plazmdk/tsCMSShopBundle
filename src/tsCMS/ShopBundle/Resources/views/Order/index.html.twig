@@ -1,0 +1,53 @@
+{% extends 'tsCMSSystemBundle::layout.html.twig' %}
+{% block title %}{{ "orders"|trans }}{% endblock %}
+{% block content %}
+    <form method="post">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>{{ "order.id"|trans }}</th>
+                    <th>{{ "customerDetails.name"|trans }}</th>
+                    <th>{{ "order.status"|trans }}</th>
+                    <th>{{ "order.paymentStatus"|trans }}</th>
+                    <th>{{ "order.date"|trans }}</th>
+                    <th>{{ "order.total"|trans }}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>
+                            <input name="orders[]" value="{{ order.id }}" type="checkbox"/>
+                        </td>
+                        <td>
+                            {{ order.id }}
+                        </td>
+                        <td>
+                            {{ order.customerDetails.name }}
+                        </td>
+                        <td>
+                            {{ ("orderstatus."~ order.status)|trans }}
+                        </td>
+                        <td>
+                            {{ ("paymentstatus."~ order.paymentStatus)|trans }}
+                        </td>
+                        <td>
+                            {{ order.date|date("d-m-Y H:i")}}
+                        </td>
+                        <td>
+                            {{ order|currency }}
+                        </td>
+                        <td>
+                            <a href="{{ path("tscms_shop_order_edit", { id: order.id }) }}">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <input type="submit" class="btn btn-primary" value="{{ "order.handle"|trans }}"/>
+    </form>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block body %}
+    {{ form_start(orderDetailsForm) }}
+    <div class="grid-50">
+        {{ form_row(orderDetailsForm.customerDetails) }}
+    </div>
+    <div class="grid-50">
+        {{ form_row(orderDetailsForm.note) }}
+    </div>
+    <div class="grid-100">
+        {{ form_row(orderDetailsForm.save) }}
+    </div>
+    {{ form_end(orderDetailsForm) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
