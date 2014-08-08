@@ -10,5 +10,20 @@
         "tsCMS/TemplateBundle": "*",
         "tsCMS/FileManagerBundle": "*",
         "symfony/finder": "*"
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "git@github.com::plazmdk/tsCMSSystemBundle.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "git@github.com::plazmdk/tsCMSTemplateBundle.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "git@github.com::plazmdk/tsCMSFileManagerBundle.git"
+        }
+    ]
+
 }
