@@ -14,15 +14,15 @@
     "repositories": [
         {
             "type": "vcs",
-            "url":  "git@github.com::plazmdk/tsCMSSystemBundle.git"
+            "url":  "git@github.com:plazmdk/tsCMSSystemBundle.git"
         },
         {
             "type": "vcs",
-            "url":  "git@github.com::plazmdk/tsCMSTemplateBundle.git"
+            "url":  "git@github.com:plazmdk/tsCMSTemplateBundle.git"
         },
         {
             "type": "vcs",
-            "url":  "git@github.com::plazmdk/tsCMSFileManagerBundle.git"
+            "url":  "git@github.com:plazmdk/tsCMSFileManagerBundle.git"
         }
     ]
 
