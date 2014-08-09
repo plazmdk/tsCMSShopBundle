@@ -1,28 +1,28 @@
 {
-    "name": "tsCMS/ShopBundle",
+    "name": "tscms/shop",
     "autoload": {
         "psr-0" : {
             "tsCMS\\ShopBundle" : "src"
         }
     },
     "require": {
-        "tsCMS/SystemBundle": "*",
-        "tsCMS/TemplateBundle": "*",
-        "tsCMS/FileManagerBundle": "*",
+        "tscms/system": "*",
+        "tscms/template": "*",
+        "tscms/filemanager": "*",
         "symfony/finder": "*"
     },
     "repositories": [
         {
             "type": "vcs",
-            "url":  "git@github.com:plazmdk/tsCMSSystemBundle.git"
+            "url":  "https://github.com/plazmdk/tsCMSSystemBundle"
         },
         {
             "type": "vcs",
-            "url":  "git@github.com:plazmdk/tsCMSTemplateBundle.git"
+            "url":  "https://github.com/plazmdk/tsCMSTemplateBundle"
         },
         {
             "type": "vcs",
-            "url":  "git@github.com:plazmdk/tsCMSFileManagerBundle.git"
+            "url":  "https://github.com/plazmdk/tsCMSFileManagerBundle"
         }
     ]
 
