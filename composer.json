@@ -2,7 +2,7 @@
     "name": "tscms/shop",
     "autoload": {
         "psr-0" : {
-            "tsCMS\\ShopBundle" : "src"
+            "tsCMS\\ShopBundle" : ""
         }
     },
     "require": {
