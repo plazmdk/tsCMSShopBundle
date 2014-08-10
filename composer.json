@@ -5,6 +5,7 @@
             "tsCMS\\ShopBundle" : ""
         }
     },
+    "target-dir": "tsCMS/ShopBundle",
     "require": {
         "tscms/system": "dev-master",
         "tscms/template": "dev-master",
