@@ -81,7 +81,6 @@ class ProductController extends Controller {
             $em->flush();
 
             $this->saveProductPath($product);
-            $this->handleProductImages($product, $request);
 
             return $this->redirect($this->generateUrl("tscms_shop_product_edit",array("id" => $product->getId())));
         }
@@ -147,28 +146,6 @@ class ProductController extends Controller {
         }
     }
 
-    private function handleProductImages(Product $product, Request $request) {
-
-        $webPath = $this->get('kernel')->getRootDir() . '/../web';
-
-        /** @var UploadedFile[] $uploadedImages */
-        $uploadedImages = $request->files->get("tsCMS_shop_producttype")["images"];
-        foreach($uploadedImages as $uploadedImage) {
-            if ($uploadedImage) {
-                $file = $uploadedImage->move($webPath."/upload/product/".$product->getId(),time().$uploadedImage->getClientOriginalName());
-
-                $image = new Image();
-                $image->setTitle("");
-                $image->setDescription("");
-
-                $image->setPath(str_replace($webPath,"",$file->getPath())."/".$file->getFilename());
-
-                $product->addImage($image);
-            }
-        }
-
-        $this->getDoctrine()->getManager()->flush();
-    }
 
     private function enableVariantOption(Product $product, VariantOption $variantOption) {
 

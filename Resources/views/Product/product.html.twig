@@ -17,6 +17,8 @@
                     {{ form_row(form.description) }}
                     {{ form_row(form.inventory) }}
                     {{ form_row(form.disabled) }}
+
+                    {{ form_row(form.images) }}
                 </div>
             </div>
         </div>
@@ -51,23 +53,6 @@
                 </div>
                 <div class="box-body">
                     {{ form_row(form.categories) }}
-                </div>
-            </div>
-            <div class="box">
-                <div class="box-header">
-                    <div class="box-title">
-                        {{ "product.images"|trans }}
-                    </div>
-                </div>
-                <div class="box-body">
-                    {{ form_row(form.images) }}
-                    <div id="productimages" class="row">
-                        {% for image in product.images %}
-                            <a href="{{ image.path }}" class="col-sm-2">
-                                <img src="{{ image.path }}" style="width:100%" alt="{{ image.title }}"/>
-                            </a>
-                        {% endfor %}
-                    </div>
                 </div>
             </div>
         </div>

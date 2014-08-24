@@ -77,14 +77,13 @@ class ProductType extends AbstractType {
                     "data-price-group" => "price",
                 )
             ))
-            ->add('images','file',array(
-                'label' => 'product.addimages',
+            ->add('images','filepicker',array(
+                'label' => 'product.images',
+                'class' => 'tsCMS\ShopBundle\Entity\Image',
                 'required' => false,
-                'attr' => array(
-                    "accept" => "image/*",
-                    'multiple' => 'multiple'
-                ),
-                'mapped' => false
+                'image' => true,
+                'titleField' => 'title',
+                'descriptionField' => 'description'
             ))
             ->add('categories', 'entity', array(
                 'class'         => 'tsCMSShopBundle:Category',

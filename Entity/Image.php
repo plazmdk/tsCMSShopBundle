@@ -23,13 +23,13 @@ class Image {
     /**
      * @ORM\Column(type="string")
      */
-    protected $title;
-    /**
-     * @ORM\Column(type="string")
-     */
     protected $path;
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $title;
+    /**
+     * @ORM\Column(type="string", nullable=true)
      */
     protected $description;
     /**
