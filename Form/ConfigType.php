@@ -12,9 +12,20 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use tsCMS\ShopBundle\Services\ShipmentService;
 use tsCMS\ShopBundle\Services\ShopService;
 
 class ConfigType extends AbstractType {
+
+    /** @var  ShipmentService */
+    private $shipmentService;
+
+    function __construct($shipmentService)
+    {
+        $this->shipmentService = $shipmentService;
+    }
+
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -48,6 +59,9 @@ class ConfigType extends AbstractType {
             ->add("paymentCallbackUrl","text", array(
                 "label" => "config.paymentCallbackUrl",
             ))
+            ->add("openCartUrl","text", array(
+                "label" => "config.openCartUrl",
+            ))
             ->add("orderConfirmationTemplate","entity", array(
                 "label" => "config.orderConfirmationTemplate",
                 "class" => "tsCMSTemplateBundle:Template",
@@ -79,6 +93,21 @@ class ConfigType extends AbstractType {
             ))
             ->add("shopEmail","email", array(
                 "label" => "config.shopEmail"
+            ))
+            ->add("shipmentRequireMatch","choice", array(
+                "label" => "config.shipmentRequireMatch",
+                "choices" => array(1,0)
+            ))
+            ->add("shipmentRequireMatch","choice", array(
+                "label" => "config.shipmentRequireMatch",
+                "choices" => array(1,0)
+            ))
+            ->add("shipmentFallbackMethod","entity", array(
+                "label" => "config.shipmentFallbackMethod",
+                "class" => "tsCMSShopBundle:ShipmentMethod",
+                "choices" => $this->shipmentService->getEnabledShipmentMethods(),
+                "required" => false,
+                "property" => "title"
             ))
             ->add("save","submit", array(
                 "label" => "config.save"

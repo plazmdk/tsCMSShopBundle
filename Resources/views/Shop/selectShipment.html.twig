@@ -5,23 +5,25 @@
 {% block body %}
     {{ form_start(orderShipmentForm) }}
     <div class="row">
-        <div class="grid-100">
+        <div class="grid-100" id="shipmentOptions">
             {{ form_row(orderShipmentForm.shipmentMethod) }}
         </div>
     </div>
     <div class="row">
         <div class="grid-100">
-            <div>
-                <label>
-                    <input type="checkbox" id="alternativeShipmentAddressToggle" value="1"/>
-                    {{ "order.alternativeShipmentDetails"|trans }}
-                </label>
-            </div>
-            <div id="alternativeShipmentAddressNote" class="callout callout-info">
-                {{ "order.noShipmentDetails"|trans }}
-            </div>
-            <div id="alternativeShipmentAddress" style="display: none;">
-                {{ form_row(orderShipmentForm.shipmentDetails) }}
+            <div id="alternativeShipment">
+                <div>
+                    <label>
+                        <input type="checkbox" id="alternativeShipmentAddressToggle" value="1"/>
+                        {{ "order.alternativeShipmentDetails"|trans }}
+                    </label>
+                </div>
+                <div id="alternativeShipmentAddressNote" class="callout callout-info">
+                    {{ "order.noShipmentDetails"|trans }}
+                </div>
+                <div id="alternativeShipmentAddress" style="display: none;">
+                    {{ form_row(orderShipmentForm.shipmentDetails) }}
+                </div>
             </div>
         </div>
     </div>
@@ -47,6 +49,16 @@
                 address.hide();
                 note.show();
             }
-        })
+        });
+        $("#shipmentOptions").on("click", "input", function() {
+            var option = $(this);
+            var deliveryAddress = $("#alternativeShipment");
+            if (option.data("allowdeliveryaddress") == 1) {
+                deliveryAddress.show();
+            } else {
+                deliveryAddress.hide();
+                $("#alternativeShipmentAddress").find("input").val("");
+            }
+        }).find(":checked").click();
     </script>
 {% endblock %}

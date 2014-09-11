@@ -16,10 +16,12 @@ use tsCMS\ShopBundle\Model\Statuses;
 
 class OrderStatusType extends AbstractType {
     private $allowPaymentStatusChange;
+    private $isCartOrder;
 
-    function __construct($allowPaymentStatusChange)
+    function __construct($allowPaymentStatusChange, $isCartOrder)
     {
         $this->allowPaymentStatusChange = $allowPaymentStatusChange;
+        $this->isCartOrder = $isCartOrder;
     }
 
 
@@ -32,13 +34,26 @@ class OrderStatusType extends AbstractType {
         $builder
             ->add('status', 'choice', array(
                 'label' => 'order.status',
-                'choices' => Statuses::$orderStatus
+                'choices' => Statuses::$orderStatus,
+                'required' => !$this->isCartOrder
             ))
             ->add('paymentStatus', 'choice', array(
                 'label' => 'order.paymentStatus',
                 'choices' => Statuses::$paymentStatus,
-                'disabled' => $this->allowPaymentStatusChange
-            ))
+                'disabled' => $this->allowPaymentStatusChange,
+                'required' => !$this->isCartOrder
+            ));
+
+        if ($this->isCartOrder) {
+            $builder->add('cart', 'checkbox', array(
+                'label' => 'order.isCart',
+                'required' => false,
+            ));
+        } else {
+            $builder->add('cart', 'hidden');
+        }
+
+        $builder
             ->add("save","submit",array(
                 'label' => 'order.save',
             ));

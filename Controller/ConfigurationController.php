@@ -16,6 +16,7 @@ use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Component\HttpFoundation\Request;
 use tsCMS\ShopBundle\Form\ConfigType;
 use tsCMS\ShopBundle\Model\Config;
+use tsCMS\ShopBundle\Services\ShipmentService;
 use tsCMS\SystemBundle\Services\ConfigService;
 use tsCMS\SystemBundle\Services\RouteService;
 
@@ -74,6 +75,11 @@ class ConfigurationController extends Controller {
             $config->setPaymentCallbackUrl($paymentCallbackRoute->getPath());
         }
 
+        $openCartRoute = $routeService->getRouteByName(Config::OPEN_CART_ROUTE_NAME);
+        if ($openCartRoute) {
+            $config->setOpenCartUrl($openCartRoute->getPath());
+        }
+
         /** @var ConfigService $configService */
         $configService = $this->get("tsCMS.configService");
         $config->setProductUrl($configService->get(Config::PRODUCT_URL));
@@ -93,8 +99,16 @@ class ConfigurationController extends Controller {
         $config->setShopName($configService->get(Config::SHOP_NAME));
         $config->setShopEmail($configService->get(Config::SHOP_EMAIL));
 
+        $config->setShipmentRequireMatch($configService->get(Config::SHIPMENT_REQUIRE_MATCH));
+        if ($configService->get(Config::SHIPMENT_FALLBACK_METHOD)) {
+            $shipmentRepository = $this->getDoctrine()->getRepository("tsCMSShopBundle:ShipmentMethod");
+            $config->setShipmentFallbackMethod($shipmentRepository->find($configService->get(Config::SHIPMENT_FALLBACK_METHOD)));
+        }
 
-        $form = $this->createForm(new ConfigType(), $config);
+        /** @var ShipmentService $shipmentService */
+        $shipmentService = $this->get("tsCMS_shop.shipmentservice");
+
+        $form = $this->createForm(new ConfigType($shipmentService), $config);
         $form->handleRequest($request);
         if ($form->isValid()) {
             $routeService->addRoute(Config::BASKET_ROUTE_NAME, "basket", $config->getBasketUrl(), "tsCMSShopBundle:Shop:basket", "shop",array(),array(),false,true);
@@ -105,11 +119,14 @@ class ConfigurationController extends Controller {
             $routeService->addRoute(Config::APPROVED_PAYMENT_ROUTE_NAME, "approvedPayment", $config->getApprovedPaymentUrl(), "tsCMSShopBundle:Shop:paymentApproved", "shop",array(),array(),false,true);
             $routeService->addRoute(Config::FAILED_PAYMENT_ROUTE_NAME, "failedPayment", $config->getFailedPaymentUrl(), "tsCMSShopBundle:Shop:paymentFailed", "shop",array(),array(),false,true);
             $routeService->addRoute(Config::PAYMENT_CALLBACK_ROUTE_NAME, "paymentCallback", $config->getPaymentCallbackUrl(), "tsCMSShopBundle:Shop:callback", "shop",array(),array(),false,true);
+            $routeService->addRoute(Config::OPEN_CART_ROUTE_NAME, "openCart", $config->getOpenCartUrl(), "tsCMSShopBundle:Shop:openCart", "shop",array(),array(),true,true);
             $configService->set(Config::PRODUCT_URL, $config->getProductUrl());
             $configService->set(Config::CONFIRMATION_TEMPLATE, $config->getOrderConfirmationTemplate()->getId());
             $configService->set(Config::INVOICE_TEMPLATE, $config->getOrderInvoiceTemplate()->getId());
             $configService->set(Config::SHOP_NAME, $config->getShopName());
             $configService->set(Config::SHOP_EMAIL, $config->getShopEmail());
+            $configService->set(Config::SHIPMENT_REQUIRE_MATCH, $config->getShipmentRequireMatch());
+            $configService->set(Config::SHIPMENT_FALLBACK_METHOD, $config->getShipmentFallbackMethod() ? $config->getShipmentFallbackMethod()->getId() : null);
             return $this->redirect($this->generateUrl("tscms_shop_configuration_index"));
         }
 

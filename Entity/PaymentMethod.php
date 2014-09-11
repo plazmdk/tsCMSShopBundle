@@ -37,6 +37,13 @@ class PaymentMethod {
      */
     protected $options;
     /**
+     * @var VatGroup
+     *
+     * @ORM\ManyToOne(targetEntity="VatGroup")
+     * @ORM\JoinColumn(name="vatGroup_id", referencedColumnName="id")
+     */
+    protected $vatGroup;
+    /**
      * @ORM\Column(type="integer")
      */
     protected $position;
@@ -175,5 +182,21 @@ class PaymentMethod {
     public function getDeleted()
     {
         return $this->deleted;
+    }
+
+    /**
+     * @param \tsCMS\ShopBundle\Entity\VatGroup $vatGroup
+     */
+    public function setVatGroup($vatGroup)
+    {
+        $this->vatGroup = $vatGroup;
+    }
+
+    /**
+     * @return \tsCMS\ShopBundle\Entity\VatGroup
+     */
+    public function getVatGroup()
+    {
+        return $this->vatGroup;
     }
 } 

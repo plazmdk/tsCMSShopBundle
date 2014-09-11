@@ -12,6 +12,7 @@ namespace tsCMS\ShopBundle\PaymentGateways;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use tsCMS\ShopBundle\Entity\Order;
+use tsCMS\ShopBundle\Entity\VatGroup;
 use tsCMS\ShopBundle\Interfaces\PaymentGatewayInterface;
 use tsCMS\ShopBundle\Model\PaymentAuthorize;
 use tsCMS\ShopBundle\Model\PaymentCapture;
@@ -22,10 +23,11 @@ use tsCMS\ShopBundle\Model\PaymentStatus;
 use tsCMS\ShopBundle\Model\Statuses;
 
 class Plain implements PaymentGatewayInterface {
+    private $options = array();
 
     public function __construct($options)
     {
-
+        $this->options = $options;
     }
 
     public function getName()
@@ -40,7 +42,9 @@ class Plain implements PaymentGatewayInterface {
 
     public function getOptionForm(FormBuilderInterface $formBuilder)
     {
-
+        $formBuilder->add("fee","tscms_shop_price", array(
+            "label" => "paymentgateway.plain.fee"
+        ));
     }
 
     public function getAuthorizeForm(FormBuilderInterface $formBuilder, PaymentAuthorize $authorize, Order $order)
@@ -104,5 +108,10 @@ class Plain implements PaymentGatewayInterface {
     public function possibleCaptureAmount(Order $order)
     {
         return 0;
+    }
+
+    public function calculatePrice(Order $order)
+    {
+        return $this->options['fee'];
     }
 }

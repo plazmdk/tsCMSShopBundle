@@ -22,6 +22,7 @@ class Config {
     const APPROVED_PAYMENT_ROUTE_NAME = "approvedPayment";
     const FAILED_PAYMENT_ROUTE_NAME = "failedPayment";
     const PAYMENT_CALLBACK_ROUTE_NAME = "paymentCallback";
+    const OPEN_CART_ROUTE_NAME = "openCart";
 
     private $productUrl;
     private $basketUrl;
@@ -32,18 +33,22 @@ class Config {
     private $approvedPaymentUrl;
     private $failedPaymentUrl;
     private $paymentCallbackUrl;
+    private $openCartUrl;
 
     const CONFIRMATION_TEMPLATE = "tsCMS_shop_confirmationTemplate";
     const INVOICE_TEMPLATE = "tsCMS_shop_invoiceTemplate";
-
     private $orderConfirmationTemplate;
     private $orderInvoiceTemplate;
 
     const SHOP_NAME = "tsCMS_shop_name";
     const SHOP_EMAIL = "tsCMS_shop_email";
-
     private $shopName;
     private $shopEmail;
+
+    const SHIPMENT_REQUIRE_MATCH = "tsCMS_shop_shipmentRequireMatch";
+    const SHIPMENT_FALLBACK_METHOD = "tsCMS_shop_shipmentFallbackMethod";
+    private $shipmentRequireMatch;
+    private $shipmentFallbackMethod;
 
     /**
      * @param mixed $basketUrl
@@ -192,6 +197,22 @@ class Config {
     }
 
     /**
+     * @param mixed $openCartUrl
+     */
+    public function setOpenCartUrl($openCartUrl)
+    {
+        $this->openCartUrl = $openCartUrl;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOpenCartUrl()
+    {
+        return $this->openCartUrl;
+    }
+
+    /**
      * @param Template $orderConfirmationTemplate
      */
     public function setOrderConfirmationTemplate($orderConfirmationTemplate)
@@ -253,6 +274,38 @@ class Config {
     public function getShopName()
     {
         return $this->shopName;
+    }
+
+    /**
+     * @param mixed $shipmentFallbackMethod
+     */
+    public function setShipmentFallbackMethod($shipmentFallbackMethod)
+    {
+        $this->shipmentFallbackMethod = $shipmentFallbackMethod;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShipmentFallbackMethod()
+    {
+        return $this->shipmentFallbackMethod;
+    }
+
+    /**
+     * @param mixed $shipmentRequireMatch
+     */
+    public function setShipmentRequireMatch($shipmentRequireMatch)
+    {
+        $this->shipmentRequireMatch = $shipmentRequireMatch;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShipmentRequireMatch()
+    {
+        return $this->shipmentRequireMatch;
     }
 
 

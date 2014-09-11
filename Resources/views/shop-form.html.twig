@@ -1,0 +1,72 @@
+{% block tscms_shop_price_widget %}
+    {% if attr.class is defined %}
+        {% set class = attr.class ~ ' priceNoVat' %}
+    {% else %}
+        {% set class = 'priceNoVat' %}
+    {% endif %}
+    {% set attr = attr|merge({'class' : class}) %}
+    {% spaceless %}
+        {% if helper %}
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            {{ money_pattern|replace({"{{ widget }}":""}) }}
+                        </span>
+                        {{ block('form_widget_simple') }}
+                        <span class="input-group-addon">
+                            {{ "price.noVat"|trans }}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            {{ money_pattern|replace({"{{ widget }}":""}) }}
+                        </span>
+                        <input type="text" class="form-control priceVat"/>
+                        <span class="input-group-addon">
+                            {{ "price.withVat"|trans }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="input-group">
+                <span class="input-group-addon">
+                    {{ money_pattern|replace({"{{ widget }}":""}) }}
+                </span>
+                {{ block('form_widget_simple') }}
+                <span class="input-group-addon">
+                    {{ "price.noVat"|trans }}
+                </span>
+            </div>
+        {% endif %}
+    {% endspaceless %}
+{% endblock %}
+
+{% block tscms_shop_productorderline_widget %}
+    <tr>
+        <td>
+            {{ form_widget(form._type) }}
+            {{ form_widget(form.amount) }}
+        </td>
+        <td>{{ form_widget(form.product) }}</td>
+        <td>{{ form_widget(form.price) }}</td>
+        <td>{{ form_widget(form.total) }}</td>
+        <td style="text-align: center;">{{ form_widget(form.fixedPrice) }}</td>
+    </tr>
+{% endblock %}
+
+{% block tscms_shop_shipmentorderline_widget %}
+    <tr>
+        <td>
+            {{ form_widget(form._type) }}
+            {{ form_widget(form.amount) }}
+        </td>
+        <td>{{ form_widget(form.shipmentMethod) }}</td>
+        <td>{{ form_widget(form.price) }}</td>
+        <td>{{ form_widget(form.total) }}</td>
+        <td style="text-align: center;">{{ form_widget(form.fixedPrice) }}</td>
+    </tr>
+{% endblock %}

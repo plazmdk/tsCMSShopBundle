@@ -47,9 +47,7 @@ class Product implements PathInterface, PriceInterface {
     /**
      * @ORM\Column(type="integer", nullable=false)
      */
-    protected $productPrice = 0;
-    protected $productPriceVat = 0;
-
+    protected $price = 0;
     /**
      * @var VatGroup
      *
@@ -58,11 +56,19 @@ class Product implements PathInterface, PriceInterface {
      */
     protected $vatGroup;
     /**
+     * @var ShipmentGroup
+     *
+     * @ORM\ManyToOne(targetEntity="ShipmentGroup")
+     * @ORM\JoinColumn(name="shipmentGroup_id", referencedColumnName="id")
+     */
+    protected $shipmentGroup;
+    /**
      * @ORM\Column(type="boolean")
      */
     protected $disabled = false;
     /**
      * @ORM\OneToMany(targetEntity="Image", mappedBy="product", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"position" = "ASC"})
      */
     protected $images;
     /**
@@ -97,8 +103,6 @@ class Product implements PathInterface, PriceInterface {
     protected $categories;
 
     protected $path;
-
-    protected $price;
 
     public function __construct() {
         $this->variants = new ArrayCollection();
@@ -323,39 +327,23 @@ class Product implements PathInterface, PriceInterface {
     /**
      * @param int $price
      */
-    public function setProductPrice($price)
+    public function setPrice($price)
     {
-        $this->productPrice = $price;
+        $this->price = $price;
     }
 
     /**
      * @return int
      */
-    public function getProductPrice()
+    public function getPrice()
     {
-        return $this->productPrice;
-    }
-
-    /**
-     * @param int $priceVat
-     */
-    public function setProductPriceVat($priceVat)
-    {
-        $this->productPriceVat = $priceVat;
-    }
-
-    /**
-     * @return int
-     */
-    public function getProductPriceVat()
-    {
-        return $this->productPriceVat;
+        return $this->price;
     }
 
     /**
      * @param VatGroup $vatGroup
      */
-    public function setVatGroup($vatGroup)
+    public function setVatGroup(VatGroup $vatGroup)
     {
         $this->vatGroup = $vatGroup;
     }
@@ -369,21 +357,20 @@ class Product implements PathInterface, PriceInterface {
     }
 
     /**
-     * @param mixed $buyPrice
+     * @param \tsCMS\ShopBundle\Entity\ShipmentGroup $shipmentGroup
      */
-    public function setPrice($buyPrice)
+    public function setShipmentGroup($shipmentGroup)
     {
-        $this->price = $buyPrice;
+        $this->shipmentGroup = $shipmentGroup;
     }
 
     /**
-     * @return mixed
+     * @return \tsCMS\ShopBundle\Entity\ShipmentGroup
      */
-    public function getPrice()
+    public function getShipmentGroup()
     {
-        return $this->price;
+        return $this->shipmentGroup;
     }
-
 
     /**
      * @param mixed $path

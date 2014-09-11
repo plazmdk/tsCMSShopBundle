@@ -11,8 +11,11 @@ use tsCMS\ShopBundle\Interfaces\TotalInterface;
  *
  * @ORM\Table(name="orderline")
  * @ORM\Entity
+ * @ORM\InheritanceType("JOINED")
+ * @ORM\DiscriminatorColumn(name="type", type="string")
+ * @ORM\DiscriminatorMap({"product" = "ProductOrderLine", "shipment" = "ShipmentOrderLine"})
  */
-class OrderLine implements PriceInterface, TotalInterface
+abstract class OrderLine implements PriceInterface, TotalInterface
 {
     /**
      * @var integer
@@ -24,53 +27,32 @@ class OrderLine implements PriceInterface, TotalInterface
     private $id;
 
     /**
-     * @var mixed
-     *
-     * @ORM\Column(name="amount", type="decimal")
-     */
-    private $amount;
-
-    /**
      * @var string
      *
-     * @ORM\Column(name="title", type="string", length=255)
+     * @ORM\Column(name="title", type="string", length=255, nullable=true)
      */
     private $title;
 
     /**
      * @var mixed
      *
-     * @ORM\Column(name="pricePerUnit", type="decimal")
+     * @ORM\Column(name="amount", type="integer")
      */
-    private $pricePerUnit;
+    private $amount;
 
     /**
-     * @var mixed
+     * @var int
      *
-     * @ORM\Column(name="vat", type="decimal")
+     * @ORM\Column(name="price", type="integer", length=255)
      */
-    private $vat;
+    private $price;
 
     /**
-     * @var string
+     * @var boolean
      *
-     * @ORM\Column(name="partnumber", type="string", length=255)
+     * @ORM\Column(name="fixedPrice", type="boolean")
      */
-    private $partnumber;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="plugin", type="string", length=255)
-     */
-    private $plugin;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="productId", type="string", length=50)
-     */
-    private $productId;
+    private $fixedPrice = false;
 
     /**
      * @var Order
@@ -137,118 +119,19 @@ class OrderLine implements PriceInterface, TotalInterface
     }
 
     /**
-     * Set pricePerUnit
-     *
-     * @param mixed $pricePerUnit
-     * @return OrderLine
+     * @param int $price
      */
-    public function setPricePerUnit($pricePerUnit)
+    public function setPrice($price)
     {
-        $this->pricePerUnit = $pricePerUnit;
-
-        return $this;
+        $this->price = $price;
     }
 
     /**
-     * Get pricePerUnit
-     *
-     * @return mixed
+     * @return int
      */
-    public function getPricePerUnit()
+    public function getPrice()
     {
-        return $this->pricePerUnit;
-    }
-
-    /**
-     * Set vat
-     *
-     * @param mixed $vat
-     * @return OrderLine
-     */
-    public function setVat($vat)
-    {
-        $this->vat = $vat;
-
-        return $this;
-    }
-
-    /**
-     * Get vat
-     *
-     * @return mixed
-     */
-    public function getVat()
-    {
-        return $this->vat;
-    }
-
-    /**
-     * Set partnumber
-     *
-     * @param string $partnumber
-     * @return OrderLine
-     */
-    public function setPartnumber($partnumber)
-    {
-        $this->partnumber = $partnumber;
-
-        return $this;
-    }
-
-    /**
-     * Get partnumber
-     *
-     * @return string 
-     */
-    public function getPartnumber()
-    {
-        return $this->partnumber;
-    }
-
-    /**
-     * Set plugin
-     *
-     * @param string $plugin
-     * @return OrderLine
-     */
-    public function setPlugin($plugin)
-    {
-        $this->plugin = $plugin;
-
-        return $this;
-    }
-
-    /**
-     * Get plugin
-     *
-     * @return string 
-     */
-    public function getPlugin()
-    {
-        return $this->plugin;
-    }
-
-    /**
-     * Set productId
-     *
-     * @param string $productId
-     * @return OrderLine
-     */
-    public function setProductId($productId)
-    {
-        $this->productId = $productId;
-
-        return $this;
-    }
-
-    /**
-     * Get productId
-     *
-     * @return string 
-     */
-    public function getProductId()
-    {
-        return $this->productId;
+        return $this->price;
     }
 
     /**
@@ -267,23 +150,23 @@ class OrderLine implements PriceInterface, TotalInterface
         return $this->order;
     }
 
-    public function getTotal()
+    /**
+     * @param boolean $fixedPrice
+     */
+    public function setFixedPrice($fixedPrice)
     {
-        return $this->getAmount() * $this->getPricePerUnit();
+        $this->fixedPrice = $fixedPrice;
     }
 
-    public function getTotalVat()
+    /**
+     * @return boolean
+     */
+    public function isFixedPrice()
     {
-        return $this->getTotal() * (100 + $this->getVat()) / 100;
+        return $this->fixedPrice;
     }
 
-    public function getProductPrice()
-    {
-        return $this->getPricePerUnit();
-    }
-
-    public function getProductPriceVat()
-    {
-        return $this->getPricePerUnit()  * (100 + $this->getVat()) / 100;
+    public function sameAs($object) {
+        return get_class($this) == get_class($object);
     }
 }

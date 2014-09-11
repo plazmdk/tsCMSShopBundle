@@ -37,7 +37,7 @@
                             {{ order.date|date("d-m-Y H:i")}}
                         </td>
                         <td>
-                            {{ order|currency }}
+                            {{ tscms_shop_totalcalc(order)|currency }}
                         </td>
                         <td>
                             <a href="{{ path("tscms_shop_order_edit", { id: order.id }) }}">
@@ -49,5 +49,6 @@
             </tbody>
         </table>
         <input type="submit" class="btn btn-primary" value="{{ "order.handle"|trans }}"/>
+        <a class="btn btn-default" href="{{ path("tscms_shop_order_create") }}">{{ "order.create"|trans }}</a>
     </form>
 {% endblock %}

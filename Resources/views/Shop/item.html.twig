@@ -1,12 +1,12 @@
 <tr>
-    <td class="title">{{ item.title }}</td>
+    <td class="title">{{ line.title }}</td>
     <td class="amount">
-        {% if noInput is defined %}
-            {{ item.amount }}
+        {% if noInput is defined or line.isFixedPrice %}
+            {{ line.amount }}
         {% else %}
-            <input type="number" min="0" step="1" name="amounts[{{ key }}]" value="{{ item.amount }}"/>
+            <input type="number" min="0" step="1" name="amounts[{{ key }}]" value="{{ line.amount }}"/>
         {% endif %}
     </td>
-    <td class="price">{{ item|currency }}</td>
-    <td class="price">{{ item|currency(true) }}</td>
+    <td class="price">{{ tscms_shop_pricecalc(line)|currency }}</td>
+    <td class="price">{{ tscms_shop_totalcalc(line)|currency }}</td>
 </tr>

@@ -8,6 +8,7 @@
 
 namespace tsCMS\ShopBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Table(name="shipmentmethod")
@@ -55,6 +56,22 @@ class ShipmentMethod {
      * @ORM\JoinColumn(name="vatGroup_id", referencedColumnName="id")
      */
     protected $vatGroup;
+    /**
+     * @var ShipmentGroup[]
+     *
+     * @ORM\ManyToMany(targetEntity="ShipmentGroup")
+     * @ORM\JoinTable(name="shipmentmethod_shipmentgroup",
+     *      joinColumns={@ORM\JoinColumn(name="shipmentmethod_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="shipmentgroup_id", referencedColumnName="id")}
+     *      )
+     */
+    protected $shipmentGroups;
+
+    function __construct()
+    {
+        $this->shipmentGroups = new ArrayCollection();
+    }
+
 
     /**
      * @param mixed $config
@@ -200,5 +217,46 @@ class ShipmentMethod {
     {
         return $this->vatGroup;
     }
+
+    /**
+     * @param mixed $shipmentGroups
+     */
+    public function setShipmentGroups($shipmentGroups)
+    {
+        $this->shipmentGroups = $shipmentGroups;
+    }
+
+    /**
+     * @return ShipmentGroup[]
+     */
+    public function getShipmentGroups()
+    {
+        return $this->shipmentGroups;
+    }
+
+
+
+    /*************
+     * Unmapped
+     *************/
+
+    private $deliveryAddressAllowed;
+
+    /**
+     * @param mixed $deliveryAddressAllowed
+     */
+    public function setDeliveryAddressAllowed($deliveryAddressAllowed)
+    {
+        $this->deliveryAddressAllowed = $deliveryAddressAllowed;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeliveryAddressAllowed()
+    {
+        return $this->deliveryAddressAllowed;
+    }
+
 
 } 

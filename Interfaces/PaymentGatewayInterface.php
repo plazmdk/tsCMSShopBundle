@@ -65,4 +65,6 @@ interface PaymentGatewayInterface {
      * @return int
      */
     public function possibleCaptureAmount(Order $order);
+
+    public function calculatePrice(Order $order);
 }

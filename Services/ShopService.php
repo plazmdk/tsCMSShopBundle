@@ -18,7 +18,10 @@ use tsCMS\ShopBundle\Entity\CustomerDetails;
 use tsCMS\ShopBundle\Entity\Order;
 use tsCMS\ShopBundle\Entity\OrderLine;
 use tsCMS\ShopBundle\Entity\PaymentMethod;
+use tsCMS\ShopBundle\Entity\Product;
 use tsCMS\ShopBundle\Entity\Productlist;
+use tsCMS\ShopBundle\Entity\ProductOrderLine;
+use tsCMS\ShopBundle\Entity\VatGroup;
 use tsCMS\ShopBundle\Model\Statuses;
 use tsCMS\SystemBundle\Event\BuildSiteStructureEvent;
 use tsCMS\SystemBundle\Model\SiteStructureAction;
@@ -60,6 +63,7 @@ class ShopService {
         if ($this->container->getParameter("variants")) {
             $pagesGroup->addElement(new SiteStructureAction($this->translator->trans("variants"),$this->router->generate("tscms_shop_variant_index")));
         }
+        $pagesGroup->addElement(new SiteStructureAction($this->translator->trans("shipmentgroups"),$this->router->generate("tscms_shop_shipmentgroup_index")));
         $pagesGroup->addElement(new SiteStructureAction($this->translator->trans("vatgroups"),$this->router->generate("tscms_shop_vatgroup_index")));
         $pagesGroup->addElement(new SiteStructureAction($this->translator->trans("paymentmethods"),$this->router->generate("tscms_shop_payment_index")));
         $pagesGroup->addElement(new SiteStructureAction($this->translator->trans("shipmentmethods"),$this->router->generate("tscms_shop_shipment_index")));
@@ -96,20 +100,6 @@ class ShopService {
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @param bool $new Forces the session to create a new order
-     * @return Order
-     */
-    public function getOrder($new = false) {
-        $order = $this->session->get("tsCMS_shop_order");
-        if ($order === null || $new == true) {
-            $order = new Order();
-            $order->setDate(new \DateTime());
-            $this->session->set("tsCMS_shop_order", $order);
-        }
-        return $order;
-    }
-
     public function onGetTemplateTypesEvent(GetTemplateTypesEvent $event) {
         $customerDetails = new CustomerDetails();
         $customerDetails->setName("John Doe");
@@ -130,23 +120,16 @@ class ShopService {
         $testOrder->setPaymentMethod($paymentMethod);
         $testOrder->setPaymentStatus(Statuses::PAYMENT_CAPTURED);
         $testOrder->setStatus(Statuses::ORDER_RECEIVED);
-        $line1 = new OrderLine();
-        $line1->setTitle("Produkt of this");
-        $line1->setAmount(2);
-        $line1->setPartnumber("p1this");
-        $line1->setPlugin("Shop");
-        $line1->setPricePerUnit(12000);
-        $line1->setVat(25);
-        $line1->setProductId(1);
-        $line2 = new OrderLine();
-        $line2->setTitle("This other product");
-        $line2->setAmount(2);
-        $line2->setPartnumber("p2his");
-        $line2->setPlugin("Shop");
-        $line2->setPricePerUnit(4500);
-        $line2->setVat(25);
-        $line2->setProductId(1);
-        $testOrder->setLines(array($line1, $line2));
+        $vatGroup = new VatGroup();
+        $vatGroup->setPercentage(25);
+        $product = new Product();
+        $product->setVatGroup($vatGroup);
+        $product->setTitle("Produkt of this");
+        $line = new ProductOrderLine();
+        $line->setProduct($product);
+        $line->setAmount(2);
+        $line->setPrice(120);
+        $testOrder->addLine($line);
 
         $orderConfirmationTemplate = new TemplateType(self::ORDER_CONFIRMATION_TEMPLATE, $this->translator->trans("order.confirmationTemplate"), array(
             "order" => $testOrder

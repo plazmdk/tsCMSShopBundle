@@ -5,7 +5,8 @@
     <table class="table">
         <thead>
             <tr>
-                <th>{{ "vatgroup.title"|trans }}</th>
+                <th>{{ "category.title"|trans }}</th>
+                <th>{{ "category.parent"|trans }}</th>
                 <th></th>
             </tr>
         </thead>
@@ -13,6 +14,11 @@
             {% for category in categories %}
                 <tr>
                     <td>{{ category.title }}</td>
+                    <td>
+                        {% if category.parent %}
+                            {{ category.parent.title }}
+                        {% endif %}
+                    </td>
                     <td>
                         <a href="{{ path("tscms_shop_category_edit", {id:category.id}) }}">
                             <i class="fa fa-edit"></i>

@@ -14,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use tsCMS\ShopBundle\Entity\Image;
 use tsCMS\ShopBundle\Entity\Product;
@@ -149,5 +150,25 @@ class ProductController extends Controller {
 
     private function enableVariantOption(Product $product, VariantOption $variantOption) {
 
+    }
+
+    /**
+     * @Route("/autocomplete")
+     * @Secure("ROLE_ADMIN")
+     */
+    public function autocompleteAction(Request $request) {
+        $query = "%".$request->query->get("query", "")."%";
+        /** @var Product[] $result */
+        $result = $this->getDoctrine()->getEntityManager()->getRepository("tsCMSShopBundle:Product")->createQueryBuilder("p")->where("p.title LIKE :query")->getQuery()->setParameter("query", $query)->getResult();
+
+        $data = array();
+        foreach ($result as $row) {
+            $data[] = array(
+                "id" => $row->getId(),
+                "title" => $row->getTitle(),
+                "price" => $row->getPrice() / 100
+            );
+        }
+        return new JsonResponse($data);
     }
 } 

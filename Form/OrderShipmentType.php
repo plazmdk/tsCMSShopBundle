@@ -12,8 +12,24 @@ namespace tsCMS\ShopBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use tsCMS\ShopBundle\Entity\Order;
+use tsCMS\ShopBundle\Entity\ShipmentMethod;
+use tsCMS\ShopBundle\Services\ShipmentService;
 
 class OrderShipmentType extends AbstractType {
+    /** @var ShipmentService */
+    private $shipmentService;
+    /** @var  ShipmentMethod */
+    private $selectedShipmentMethod;
+    /** @var Order */
+    private $order;
+
+    public function __construct(ShipmentService $shipmentService, $selectedShipmentMethod, $order) {
+        $this->shipmentService = $shipmentService;
+        $this->selectedShipmentMethod = $selectedShipmentMethod;
+        $this->order = $order;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -25,18 +41,21 @@ class OrderShipmentType extends AbstractType {
                 'label' => 'order.shipmentDetails',
                 'required' => false
             ))
-            ->add('shipmentMethod', 'entity', array(
+            ->add('shipmentMethod', 'extended_entity', array(
                 'label' => 'order.shipmentMethod',
                 'class' => 'tsCMSShopBundle:ShipmentMethod',
+                'option_attributes' => array('data-allowdeliveryaddress' => 'deliveryAddressAllowed'),
+                'choices' => $this->shipmentService->getPossibleShipmentMethods($this->order),
                 'property' => 'title',
                 'expanded' => true,
-                'mapped' => false
+                'mapped' => false,
+                'data' => $this->selectedShipmentMethod
             ))
             ->add("save","submit",array(
                 'label' => 'order.next',
             ));
 
-        ;
+
     }
 
     /**

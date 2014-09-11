@@ -20,12 +20,8 @@ class ProductLoadListener {
     {
         $entity = $event->getObject();
         if ($entity instanceof Product) {
-            // Calculate the VAT of the product (for use in the administration)
-            $vatFactor = (100 + $entity->getVatGroup()->getPercentage()) / 100;
-            $entity->setProductPriceVat($entity->getProductPrice() * $vatFactor);
-
             // Calculate the actual buyprice for a single item
-            $buyPrice = $entity->getProductPrice();
+            $buyPrice = $entity->getPrice();
 
             $entity->setPrice($buyPrice);
         }

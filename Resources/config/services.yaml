@@ -7,7 +7,7 @@ services:
             - { name: kernel.event_listener, event: tsCMS.template.get_template_type, method: onGetTemplateTypesEvent }
     tsCMS_shop.basketservice:
         class: tsCMS\ShopBundle\Services\BasketService
-        arguments: [ @session, @event_dispatcher ]
+        arguments: [ @session, @doctrine.orm.entity_manager, @event_dispatcher ]
     tsCMS_shop.paymentservice:
             class: tsCMS\ShopBundle\Services\PaymentService
             arguments: [ @doctrine.orm.entity_manager ]
@@ -24,3 +24,34 @@ services:
         arguments: [ @tsCMS_shop.basketService ]
         tags:
             - { name: twig.extension }
+    tsCMS_shop.twig.shopExtension:
+        class: tsCMS\ShopBundle\Twig\ShopExtension
+        arguments: [ @session ]
+        tags:
+            - { name: twig.extension }
+    tsCMS_shop.form.type.vatgroup:
+        class: tsCMS\ShopBundle\Form\Type\VatGroupType
+        arguments: [ tsCMS\ShopBundle\Entity\VatGroup ]
+        tags:
+            - { name: form.type, alias: tscms_shop_vatgroup }
+    tsCMS_shop.form.type.shipmentgroup:
+        class: tsCMS\ShopBundle\Form\Type\ShipmentGroupType
+        arguments: [ tsCMS\ShopBundle\Entity\ShipmentGroup ]
+        tags:
+            - { name: form.type, alias: tscms_shop_shipmentgroup }
+    tsCMS_shop.form.type.price:
+        class: tsCMS\ShopBundle\Form\Type\PriceType
+        tags:
+            - { name: form.type, alias: tscms_shop_price }
+    tscms.twig.extension.loader:
+        class:        Twig_Extension_StringLoader
+        tags:
+             - { name: 'twig.extension' }
+    tsCMS_shop.form.type.productorderline:
+        class: tsCMS\ShopBundle\Form\ProductOrderLineType
+        tags:
+            - { name: form.type, alias: tscms_shop_productorderline }
+    tsCMS_shop.form.type.shipmentorderline:
+        class: tsCMS\ShopBundle\Form\ShipmentOrderLineType
+        tags:
+            - { name: form.type, alias: tscms_shop_shipmentorderline }

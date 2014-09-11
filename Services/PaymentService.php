@@ -25,6 +25,10 @@ class PaymentService {
     }
 
     public function getPaymentMethods() {
+        return $this->em->createQuery("SELECT pm FROM tsCMSShopBundle:PaymentMethod pm WHERE pm.deleted=0 ORDER BY pm.position")->getResult();
+    }
+
+    public function getEnabledPaymentMethods() {
         return $this->em->createQuery("SELECT pm FROM tsCMSShopBundle:PaymentMethod pm WHERE pm.enabled=1 AND pm.deleted=0 ORDER BY pm.position")->getResult();
     }
 

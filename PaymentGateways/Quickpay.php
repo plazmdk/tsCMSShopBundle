@@ -40,29 +40,29 @@ class Quickpay implements PaymentGatewayInterface
 
     public function getDescription()
     {
-        return "gateway.quickpay.description";
+        return "paymentgateway.quickpay.description";
     }
 
     public function getOptionForm(FormBuilderInterface $formBuilder)
     {
         $formBuilder->add("QuickpayID","text", array(
-            "label" => "gateway.quickpay.quickpayid",
+            "label" => "paymentgateway.quickpay.quickpayid",
             "required" => false
         ));
         $formBuilder->add("QuickpaySecret","text", array(
-            "label" => "gateway.quickpay.quickpaysecret",
+            "label" => "paymentgateway.quickpay.quickpaysecret",
             "required" => false
         ));
         $formBuilder->add("QuickpayAPI","text", array(
-            "label" => "gateway.quickpay.quickpayapi",
+            "label" => "paymentgateway.quickpay.quickpayapi",
             "required" => false
         ));
         $formBuilder->add("autocapture","checkbox", array(
-            "label" => "gateway.quickpay.autocapture",
+            "label" => "paymentgateway.quickpay.autocapture",
             "required" => false
         ));
         $formBuilder->add("language", "choice", array(
-            "label" => "gateway.quickpay.language",
+            "label" => "paymentgateway.quickpay.language",
             "required" => false,
             "choices" => array(
                 "da" => "Danish",
@@ -335,6 +335,11 @@ class Quickpay implements PaymentGatewayInterface
         if ($status->getCurrentState() == PaymentStatus::AUTHORIZED) {
             return $status->getAuthorizedAmount() - $status->getCapturedAmount();
         }
+        return 0;
+    }
+
+    public function calculatePrice(Order $order)
+    {
         return 0;
     }
 }

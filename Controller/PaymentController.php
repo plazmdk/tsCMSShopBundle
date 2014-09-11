@@ -167,6 +167,9 @@ class PaymentController extends Controller {
             "label" => "paymentmethod.enabled",
             "required" => false
         ));
+        $formBuilder->add('vatGroup', 'tscms_shop_vatgroup',array(
+            'label' => 'product.vatGroup',
+        ));
         $options = $formBuilder->create("options", null, array(
             "label" => "paymentmethod.options",
             "compound" => true

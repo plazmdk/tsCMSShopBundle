@@ -9,7 +9,6 @@
 namespace tsCMS\ShopBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use TJB\FormExtensionsBundle\Interfaces\Searchable;
 use tsCMS\SystemBundle\Entity\Route;
 
 /**
@@ -17,7 +16,7 @@ use tsCMS\SystemBundle\Entity\Route;
  * @ORM\Table(name="category")
  * @ORM\Entity(repositoryClass="Gedmo\Tree\Entity\Repository\NestedTreeRepository")
  */
-class Category implements Searchable {
+class Category {
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")

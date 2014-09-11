@@ -14,6 +14,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Component\HttpFoundation\Request;
 use tsCMS\ShopBundle\Entity\Order;
+use tsCMS\ShopBundle\Entity\ProductOrderLine;
+use tsCMS\ShopBundle\Entity\ShipmentOrderLine;
+use tsCMS\ShopBundle\Form\CreateOrderType;
 use tsCMS\ShopBundle\Form\OrderCustomerDetailsType;
 use tsCMS\ShopBundle\Form\OrderLinesType;
 use tsCMS\ShopBundle\Form\OrderStatusType;
@@ -76,18 +79,50 @@ class OrderController extends Controller {
     }
 
     /**
+     * @Route("/create")
+     * @Secure("ROLE_ADMIN")
+     * @Template("tsCMSShopBundle:Order:createOrder.html.twig")
+     */
+    public function createAction(Request $request) {
+        $order = new Order();
+        $order->setCart(true);
+        $order->setDate(new \DateTime());
+        $createForm = $this->createForm(new CreateOrderType(), $order);
+        $createForm->handleRequest($request);
+        if ($createForm->isValid()) {
+            $manager = $this->getDoctrine()->getManager();
+            $manager->persist($order);
+            $manager->flush();
+
+            return $this->redirect($this->generateUrl("tscms_shop_order_edit", array("id" => $order->getId())));
+        }
+
+        return array(
+            "orderForm" => $createForm->createView()
+        );
+    }
+
+    /**
      * @Route("/edit/{id}")
      * @Secure("ROLE_ADMIN")
      * @Template("tsCMSShopBundle:Order:order.html.twig")
      */
     public function editAction(Order $order, Request $request) {
-        /** @var PaymentService $paymentService */
-        $paymentService = $this->get("tsCMS_shop.paymentservice");
-        $paymentGateway = $paymentService->getPaymentGateway($order->getPaymentMethod());
+        $allowManualChange = true;
+        $captureAmount = 0;
+
+        if (!$order->isCart() && $order->getPaymentMethod()) {
+            /** @var PaymentService $paymentService */
+            $paymentService = $this->get("tsCMS_shop.paymentservice");
+            $paymentGateway = $paymentService->getPaymentGateway($order->getPaymentMethod());
+
+            $allowManualChange = $paymentGateway->allowManualStatusChange();
+            $captureAmount = $paymentGateway->possibleCaptureAmount($order);
+        }
 
 
         // Order status updating the simple status of the order
-        $orderStatusForm = $this->createForm(new OrderStatusType(!$paymentGateway->allowManualStatusChange()), $order);
+        $orderStatusForm = $this->createForm(new OrderStatusType(!$allowManualChange, $order->isCart()), $order);
         $orderStatusForm->handleRequest($request);
         if($orderStatusForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
@@ -95,7 +130,6 @@ class OrderController extends Controller {
         }
 
         // Capture form if amount is available
-        $captureAmount = $paymentGateway->possibleCaptureAmount($order);
         $captureForm = $this->getCaptureForm($order, $captureAmount);
 
         // Order customer details - editing details about the customer

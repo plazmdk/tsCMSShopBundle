@@ -10,40 +10,39 @@ namespace tsCMS\ShopBundle\Event;
 
 
 use Symfony\Component\EventDispatcher\Event;
-use tsCMS\ShopBundle\Model\Basket;
-use tsCMS\ShopBundle\Model\Item;
-use tsCMS\SystemBundle\Model\SiteStructureGroup;
+use tsCMS\ShopBundle\Entity\Order;
+use tsCMS\ShopBundle\Entity\OrderLine;
 
 class BasketUpdatedEvent extends Event {
     /**
-     * @var Basket
+     * @var Order
      */
-    private $basket;
+    private $order;
     /**
-     * @var Item
+     * @var OrderLine
      */
-    private $updatedItem;
+    private $updatedLine;
 
-    function __construct(Basket $basket, Item $updatedItem)
+    function __construct(Order $Order, OrderLine $updatedLine)
     {
-        $this->basket = $basket;
-        $this->updatedItem = $updatedItem;
+        $this->order = $Order;
+        $this->updatedLine = $updatedLine;
     }
 
     /**
-     * @return Basket
+     * @return Order
      */
-    public function getBasket()
+    public function getOrder()
     {
-        return $this->basket;
+        return $this->order;
     }
 
     /**
-     * @return \tsCMS\ShopBundle\Model\Item
+     * @return OrderLine
      */
-    public function getUpdatedItem()
+    public function getUpdatedLine()
     {
-        return $this->updatedItem;
+        return $this->updatedLine;
     }
 
 } 

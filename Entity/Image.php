@@ -21,6 +21,10 @@ class Image {
      */
     protected $id;
     /**
+     * @ORM\Column(type="integer")
+     */
+    protected $position;
+    /**
      * @ORM\Column(type="string")
      */
     protected $path;
@@ -116,6 +120,22 @@ class Image {
     public function getTitle()
     {
         return $this->title;
+    }
+
+    /**
+     * @param mixed $position
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPosition()
+    {
+        return $this->position;
     }
 
 

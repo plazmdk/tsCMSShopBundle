@@ -1,0 +1,25 @@
+{% extends 'tsCMSSystemBundle::layout.html.twig' %}
+{% block title %}Fragtgrupper{% endblock %}
+{% block content %}
+    <a href="{{ path("tscms_shop_shipmentgroup_create") }}" class="btn btn-primary">{{ "shipmentgroup.create"|trans }}</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>{{ "shipmentgroup.title"|trans }}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for shipmentgroup in shipmentgroups %}
+                <tr>
+                    <td>{{ shipmentgroup.title }}</td>
+                    <td>
+                        <a href="{{ path("tscms_shop_shipmentgroup_edit", {id:shipmentgroup.id}) }}">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

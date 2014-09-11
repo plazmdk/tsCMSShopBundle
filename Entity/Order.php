@@ -24,6 +24,13 @@ class Order implements TotalInterface
     private $id;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="cart", type="boolean")
+     */
+    private $cart;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="date", type="datetime")
@@ -109,6 +116,22 @@ class Order implements TotalInterface
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @param boolean $cart
+     */
+    public function setCart($cart)
+    {
+        $this->cart = $cart;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isCart()
+    {
+        return $this->cart;
     }
 
     /**
@@ -302,7 +325,7 @@ class Order implements TotalInterface
     public function getTotal() {
         $total = 0;
         foreach ($this->getLines() as $line) {
-            $total += $line->getAmount() * $line->getPricePerUnit();
+            $total += $line->getTotal();
         }
 
         $total += $this->getPaymentFee();
@@ -313,7 +336,7 @@ class Order implements TotalInterface
     public function getTotalVat() {
         $total = 0;
         foreach ($this->getLines() as $line) {
-            $total += $line->getAmount() * $line->getPricePerUnit() * ($line->getVat() + 100) / 100;
+            $total += $line->getTotalVat();
         }
 
         $total += $this->getPaymentFee();

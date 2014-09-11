@@ -24,42 +24,20 @@ class BasketExtension extends \Twig_Extension {
     }
 
     public function getGlobals() {
+        $basketService = $this->basketService;
         return array(
-            "basket" => $this->basketService->getBasket()
-        );
-    }
-
-    public function getFilters() {
-        return array(
-            new \Twig_SimpleFilter('currency', array($this, 'formatCurrency'))
+            "miniBasket" => array(
+                "order" => $basketService->getOrder(),
+                "itemCount" => $basketService->getItemCount(),
+                "total" => $basketService->getTotal(),
+                "totalVat" => $basketService->getTotalVat()
+            )
         );
     }
 
     public function getBasketTotal() {
 
         return $this->basketService->getTotal();
-    }
-
-    public function formatCurrency($item,$forceTotal = false) {
-        $price = 0;
-        $priceVat = 0;
-        if ($item instanceof PriceInterface && !$forceTotal) {
-            $price = $item->getProductPrice();
-            $priceVat = $item->getProductPriceVat();
-        } else if ($item instanceof TotalInterface) {
-            $price = $item->getTotal();
-            $priceVat = $item->getTotalVat();
-        }
-
-        $showWithVat = true;
-
-        if ($showWithVat) {
-            $amount = $priceVat;
-        } else {
-            $amount = $price;
-        }
-
-        return number_format($amount / 100, 2, ",",".")." DKK";
     }
 
     public function getName()

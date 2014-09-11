@@ -8,7 +8,7 @@
                     {% for index,shipmentMethod in shipmentMethods %}
                         <div class="box box-solid">
                             <div class="box-header">
-                                <a href="#" class="close" style="margin: 5px;">
+                                <a href="#" class="remove" style="margin: 5px;">
                                     <i class="fa fa-times"></i>
                                 </a>
                                 <div class="box-title">
@@ -27,7 +27,12 @@
                                         {{ form_row(shipmentForm[index].title) }}
                                         {{ form_row(shipmentForm[index].description) }}
                                         {{ form_row(shipmentForm[index].vatGroup) }}
-                                        {{ form_widget(shipmentForm[index].options) }}
+                                        {{ form_row(shipmentForm[index].shipmentGroups) }}
+                                        {% if shipmentMethod.template %}
+                                            {% include shipmentMethod.template with { 'optionForm': shipmentForm[index].options } %}
+                                        {% else %}
+                                            {{ form_widget(shipmentForm[index].options) }}
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -41,7 +46,7 @@
     <div class="col-lg-3" id="availableGateways">
         {% for availableGateway in availableGateways %}
             <div class="box box-solid bg-light-blue">
-                <a href="#" class="close" style="display: none;margin: 5px;">
+                <a href="#" class="remove" style="display: none;margin: 5px;">
                     <i class="fa fa-times"></i>
                 </a>
                 <div class="box-header">
@@ -64,7 +69,12 @@
                             {{ form_row(availableGateway.optionForm._P_.title) }}
                             {{ form_row(availableGateway.optionForm._P_.description) }}
                             {{ form_row(availableGateway.optionForm._P_.vatGroup) }}
-                            {{ form_widget(availableGateway.optionForm._P_.options) }}
+                            {{ form_row(availableGateway.optionForm._P_.shipmentGroups) }}
+                            {% if availableGateway.template %}
+                                {% include availableGateway.template with { 'optionForm': availableGateway.optionForm._P_.options } %}
+                            {% else %}
+                                {{ form_widget(availableGateway.optionForm._P_.options) }}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -95,21 +105,26 @@
                     var result = false;
                     $(this).find("input,textarea,select,button").each(function() {
                         var field = $(this);
-                        if (field.attr("name").indexOf("_P_") != -1) {
+                        if (field.attr("name") && field.attr("name").indexOf("_P_") != -1) {
                             result = result || true;
                         }
                     });
                     return result;
                 });
                 item.removeClass("bg-light-blue");
-                item.find(".close").show();
+                item.find(".remove").show();
                 item.find(".description").hide();
                 item.find(".optionform").show();
                 var count = all.length;
                 item.find("input,textarea,select,button").each(function() {
                     var field = $(this);
-                    field.attr("name", field.attr("name").replace("_P_", count));
-                    field.attr("id", field.attr("id").replace("_P_", count));
+                    if (field.attr("name")) {
+                        field.attr("name", field.attr("name").replace("_P_", count));
+                    }
+
+                    if (field.attr("id")) {
+                        field.attr("id", field.attr("id").replace("_P_", count));
+                    }
                 });
                 item.find("div").each(function() {
                     var box = $(this);
@@ -123,6 +138,11 @@
                         label.attr("for", label.attr("for").replace("_P_", count));
                     }
                 });
+                item.find("[data-prototype]").each(function() {
+                    var prototyper = $(this);
+                    prototyper.data("prototype", prototyper.data("prototype").replace(/_P_/g, count));
+                });
+                form(item);
             },
             stop: function( event, ui ) {
                 shipmentMethods.find(".box").each(function(index) {
@@ -131,7 +151,7 @@
                 });
             }
         });
-        shipmentMethods.on("click",".close",function() {
+        shipmentMethods.on("click",".remove",function() {
             var closeButton = $(this);
             closeButton.closest(".box").remove();
             shipmentMethods.find(".box").each(function(index) {

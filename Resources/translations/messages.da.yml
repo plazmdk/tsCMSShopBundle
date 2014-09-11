@@ -10,11 +10,11 @@ product:
   inventory: Lagerstatus
   disabled: Deaktiver vare
   priceconfiguration: Prisopsætning
-  price: Pris ekskl. moms
-  priceVat: Pris inkl. moms
+  price: Pris
   vatGroup: Momsgruppe
 
   freight: Fragt
+  shipmentGroup: Fragtgruppe
 
   categories: Kategorier
 
@@ -65,23 +65,29 @@ config:
   approvedPaymentUrl: URL til success betaling
   failedPaymentUrl: URL til fejlet betaling
   paymentCallbackUrl: Callback URL til gateways
+  openCartUrl: URL til at åbne tilbud - {id} indholder tilbuddets nr.
 
   templates: Mail skabeloner
 
   orderConfirmationTemplate: Ordrebekræftelsesmail
   orderInvoiceTemplate: Fakturamail
 
+  shipment: Fragt
+  shipmentRequireMatch: Kræv at fragtmetode passer på alle produkter
+  shipmentFallbackMethod: Brug denne fragtmetode hvis fragtmetode ikke passer på alle produkter
 
   save: Gem
 
 basket:
   title: Kurv
+  fixedPrice: Låst
   pricePerUnit: Pris per stk.
   price: Pris
   amount: Antal
   save: Gem opdateringer
   buy: Køb
 
+  overrideFixedPriceShipment: Du har fået et tilbud med fast pris på levering. Hvis du ønsker at putte flere produkter i kurven forsvinder dette tilbud. Kryds af for at acceptere dette.
 
 productlists: Varelister
 productlist:
@@ -101,6 +107,7 @@ productlist:
 orders: Ordrer
 order:
   id: Ordrenr
+  isCart: Tilbud
   title: Ordre
   customerDetails: Fakturaoplysninger
   shipmentDetails: Leveringsoplysninger
@@ -121,6 +128,8 @@ order:
   confirmationTemplate: Ordrebekræftelse
   invoiceTemplate: Faktura
 
+  confirm: Godkend
+  create: Opret ordre
 
 customerDetails:
   name: Navn
@@ -137,6 +146,7 @@ category:
   create: Opret kategori
   edit: Rediger
   title: Kategori
+  parent: Underkategori til
 
   save: Gem
 
@@ -158,6 +168,7 @@ paymentgateway:
   plain:
     name: Ingen integration
     description: Denne metode er ikke forbundet med nogen indløser, men tillader f.eks. fakturabetaling og kontakt ved afhentning - måder hvor betalingsstatus ikke kan tjekkes automatisk
+    fee: Gebyr
 
   quickpay:
     name: Quickpay
@@ -191,8 +202,35 @@ shipmentmethod:
   save: Gem
   options: Indstillinger
   toggleOptions: Vis/skjul indstillinger
+  shipmentGroups: Gyldig for følgende fragtgrupper
 
 shipmentgateway:
   plain:
     name: Ingen integration
     description: Fragtmetoder som ikke er bundet op på en leverandør. Bruges bl.a. til afhentning.
+    allowdeliveryaddress: Tillad leveringsadresse
+    openprices: Åben prisstyring
+    pricetitle: Prisstyring
+    standardprice: Standardpris
+    distanceaddress: Afstand beregnes fra
+    distanceprices: Pris indenfor afstand
+    distance: Afstand i KM
+    postalcodeprices: Pris per postnummer
+    frompostalcode: Fra postnummer
+    topostalcode: Til postnummer
+    amount: Antal
+
+shipmentgroups: Fragtgrupper
+shipmentgroup:
+  create: Opret fragtgruppe
+  title: Navn
+  save: Gem
+
+
+price:
+  noVat: ekskl.
+  withVat: inkl.
+
+orderlines:
+  tscms_shop_productorderline: Ny produktlinie
+  tscms_shop_shipmentorderline: Ny fragtlinie

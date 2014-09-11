@@ -17,14 +17,14 @@
                 </tr>
             </thead>
             <tbody>
-                {% for key,item in basket.items %}
-                    {% include "tsCMSShopBundle:Shop:item.html.twig" with {key: key, item: item} %}
+                {% for key,line in basket.lines %}
+                    {% include "tsCMSShopBundle:Shop:item.html.twig" with {key: key, line: line} %}
                 {% endfor %}
             </tbody>
             <tfoot>
                 <tr>
                     <td colspan="3"></td>
-                    <td class="price total">{{ basket|currency }}</td>
+                    <td class="price total">{{ tscms_shop_totalcalc(basket)|currency }}</td>
                 </tr>
             </tfoot>
         </table>

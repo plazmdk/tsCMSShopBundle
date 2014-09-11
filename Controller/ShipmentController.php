@@ -15,6 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use tsCMS\ShopBundle\Entity\ShipmentMethod;
 use tsCMS\ShopBundle\Entity\Variant;
@@ -103,7 +104,8 @@ class ShipmentController extends Controller {
 
             $populatedshipmentmethods[] = array(
                 "method" => $shipmentMethod,
-                "gateway" => $gateway
+                "gateway" => $gateway,
+                "template" => $gateway->getOptionFormTemplate()
             );
             $this->getGatewayOptionForm($gateway, $index, $shipmentMethod, $formBuilder);
         }
@@ -124,14 +126,15 @@ class ShipmentController extends Controller {
 
         $finder = new Finder();
         $gateways = array();
-        foreach ($finder->files()->in(__DIR__."/../ShipmentGateways") as $file) { /** @var $file SplFileInfo */
+        foreach ($finder->files()->depth(0)->in(__DIR__."/../ShipmentGateways") as $file) { /** @var $file SplFileInfo */
             $gateway = $shipmentService->getShipmentGateway($file->getBasename(".".$file->getExtension()));
 
             $shipmentMethod = new ShipmentMethod();
             $shipmentMethod->setGateway($file->getBasename(".".$file->getExtension()));
             $gateways[] = array(
                 'gateway' => $gateway,
-                'optionForm' => $this->getGatewayOptionForm($gateway,null,$shipmentMethod)->getForm()->createView()
+                'optionForm' => $this->getGatewayOptionForm($gateway,null,$shipmentMethod)->getForm()->createView(),
+                'template' => $gateway->getOptionFormTemplate()
             );
         }
 
@@ -165,18 +168,19 @@ class ShipmentController extends Controller {
             "label" => "shipmentmethod.description",
             "required" => false
         ));
+        $formBuilder->add("shipmentGroups", "entity", array(
+            "label" => "shipmentmethod.shipmentGroups",
+            'class' => 'tsCMSShopBundle:ShipmentGroup',
+            'multiple' => true,
+            'expanded' => true,
+            "required" => false
+        ));
         $formBuilder->add("enabled", "checkbox", array(
             "label" => "shipmentmethod.enabled",
             "required" => false
         ));
-        $formBuilder->add('vatGroup', 'extended_entity',array(
+        $formBuilder->add('vatGroup', 'tscms_shop_vatgroup',array(
             'label' => 'product.vatGroup',
-            'class' => 'tsCMSShopBundle:VatGroup',
-            'option_attributes' => array('data-percentage' => 'percentage'),
-            'attr' => array(
-                "class" => "priceCalcVat",
-                "data-price-group" => "price",
-            )
         ));
         $options = $formBuilder->create("options", null, array(
             "label" => "shipmentmethod.options",
@@ -187,5 +191,25 @@ class ShipmentController extends Controller {
 
         $wrap->add($formBuilder);
         return $wrap;
+    }
+
+    /**
+     * @Route("/autocomplete")
+     * @Secure("ROLE_ADMIN")
+     */
+    public function autocompleteAction(Request $request) {
+        $query = "%".$request->query->get("query", "")."%";
+        /** @var ShipmentMethod[] $result */
+        $result = $this->getDoctrine()->getEntityManager()->getRepository("tsCMSShopBundle:ShipmentMethod")->createQueryBuilder("p")->where("p.title LIKE :query")->getQuery()->setParameter("query", $query)->getResult();
+
+        $data = array();
+        foreach ($result as $row) {
+            $data[] = array(
+                "id" => $row->getId(),
+                "title" => $row->getTitle(),
+                "price" => 0
+            );
+        }
+        return new JsonResponse($data);
     }
 } 

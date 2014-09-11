@@ -1,0 +1,253 @@
+{% extends 'tsCMSSystemBundle::layout.html.twig' %}
+{% block title %}{{ "order.title"|trans }}{% endblock %}
+{% block content %}
+    {{ form_start(orderForm) }}
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="box box-blue">
+                    <div class="box-header">
+                        <div class="box-title">
+                            {{ "order.title"|trans }}
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        {{ form_row(orderForm.cart) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        {{ form_row(orderForm.status) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        {{ form_row(orderForm.paymentStatus) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="box">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-9">
+                                        {{ form_label(orderForm.customerDetails) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-9">
+                                        {{ form_row(orderForm.customerDetails.name) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-9">
+                                        {{ form_row(orderForm.customerDetails.address) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-9">
+                                        {{ form_row(orderForm.customerDetails.address2) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3">
+                                        {{ form_row(orderForm.customerDetails.postalcode) }}
+                                    </div>
+                                    <div class="col-lg-6">
+                                        {{ form_row(orderForm.customerDetails.city) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-9">
+                                        {{ form_row(orderForm.customerDetails.country) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-9">
+                                        {{ form_row(orderForm.customerDetails.email) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-9">
+                                        {{ form_row(orderForm.customerDetails.phone) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-9">
+                                        {{ form_label(orderForm.shipmentDetails) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-9">
+                                        {{ form_row(orderForm.shipmentDetails.name) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-9">
+                                        {{ form_row(orderForm.shipmentDetails.address) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-9">
+                                        {{ form_row(orderForm.shipmentDetails.address2) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3">
+                                        {{ form_row(orderForm.shipmentDetails.postalcode) }}
+                                    </div>
+                                    <div class="col-lg-6">
+                                        {{ form_row(orderForm.shipmentDetails.city) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-9">
+                                        {{ form_row(orderForm.shipmentDetails.country) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-9">
+                                        {{ form_row(orderForm.shipmentDetails.email) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-9">
+                                        {{ form_row(orderForm.shipmentDetails.phone) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="box">
+                    <div class="box-body">
+                        <table class="table table-hover order orderlines">
+                            <thead>
+                                <tr>
+                                    <th class="col-lg-1">{{ "basket.amount"|trans }}</th>
+                                    <th class="col-lg-4">{{ "product.title"|trans }}</th>
+                                    <th class="col-lg-3 price">{{ "basket.pricePerUnit"|trans }}</th>
+                                    <th class="col-lg-3 price">{{ "basket.price"|trans }}</th>
+                                    <th class="col-lg-1" style="text-align: center;">{{ "basket.fixedPrice"|trans }}</th>
+                                </tr>
+                            </thead>
+                            <tbody style="overflow: hidden;">
+                                {% for widget in orderForm.lines %}
+                                    {{ form_widget(widget) }}
+                                {% endfor %}
+                                {% do orderForm.lines.setRendered %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5" class="createLineButtons">
+                                        {% for key,prototype in orderForm.lines.vars.prototypes %}
+                                            <a href="#" data-line-prototype="{{ form_widget(prototype)|e }}" class="btn btn-warning">{{ ("orderlines." ~ key)|trans }}</a>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3"></td>
+                                    <td class="price total">0</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3"></td>
+                                    <td class="price total">0</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                {{ form_row(orderForm.note) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{ form_row(orderForm.save) }}
+    {{ form_end(orderForm) }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts 'bundles/tscmsshop/js/shop.js' %}
+    <script src="{{ asset_url }}" type="text/javascript"></script>
+    {% endjavascripts %}
+    <script type="text/javascript">
+        var lineCount = $(".orderlines").find("tr").length;
+        $(".orderlines").on("entityselected",".entity-search",function(e,data){
+            var input = $(this);
+            var row = input.closest("tr");
+            row.find(".priceNoVat:not(.total)").val(data.price).change();
+        }).on("change", ".amount,.priceNoVat:not(.total)", function() {
+            var row = $(this).closest("tr");
+            var amountInput = row.find(".amount");
+            var priceInput = row.find(".priceNoVat:not(.total)");
+            var totalInput = row.find(".total");
+
+            var amount = amountInput.val();
+            var price = priceInput.val().replace(",",".");
+
+            totalInput.val(formatPrice(amount * price));
+        }).on("change", ".total", function() {
+            var totalInput = $(this);
+            var row = totalInput.closest("tr");
+            var amountInput = row.find(".amount");
+            var priceInput = row.find(".priceNoVat:not(.total)");
+
+            var amount = amountInput.val();
+            var totalPrice = totalInput.val().replace(",",".");
+
+            priceInput.val(formatPrice(totalPrice / amount));
+        }).on("click",".createLineButtons a", function(e) {
+            e.preventDefault();
+            var button = $(this);
+            var wrap = button.closest("table").find("tbody");
+            var prototype = $(button.data("line-prototype").replace(/__name__/g, lineCount));
+
+
+            prototype.appendTo(wrap);
+
+            prototype.find("input[type='checkbox'], input[type='radio']").icheck({
+                checkboxClass: 'icheckbox_minimal',
+                radioClass: 'iradio_minimal'
+            });
+
+            $(document).ready();
+
+            lineCount++;
+        }).find("tbody").sortable({
+            helper: 'clone',
+            forcePlaceholderSize: true,
+            placeholder: 'group_move_placeholder'
+        }).disableSelection();
+
+
+
+        function calcOrder() {
+
+        }
+    </script>
+{% endblock %}

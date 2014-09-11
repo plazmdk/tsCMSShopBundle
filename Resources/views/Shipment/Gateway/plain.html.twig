@@ -1,0 +1,93 @@
+{{ form_row(optionForm.allowDeliveryAddress) }}
+
+<button class="btn btn-default modalToggle">{{ "shipmentgateway.plain.openprices"|trans }}</button>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">{{ "shipmentgateway.plain.pricetitle"|trans }}</h4>
+            </div>
+            <div class="modal-body">
+                {{ form_row(optionForm.price) }}
+
+                {{ form_row(optionForm.distanceAddress) }}
+
+                {% macro distance_prototype(form) %}
+                    <tbody>
+                    <tr>
+                        <td>
+                            {{ form_widget(form.distance) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {{ form_widget(form.price) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="collectionControls">
+
+                        </td>
+                    </tr>
+                    </tbody>
+                {% endmacro %}
+
+                <table data-prototype="{{ _self.distance_prototype(optionForm.distancePrices.vars.prototype)|escape }}">
+                    <thead>
+                    <tr>
+                        <th>{{ "shipmentgateway.plain.distance"|trans }}</th>
+                    </tr>
+                    </thead>
+                    {% for widget in optionForm.distancePrices %}
+                        {{ _self.distance_prototype(widget) }}
+                    {% endfor %}
+                    {% do optionForm.distancePrices.setRendered %}
+                </table>
+
+                {% macro postalcode_prototype(form) %}
+                    <tbody>
+                    <tr>
+                        <td>
+                            {{ form_widget(form.fromPostalcode) }}
+                        </td>
+                        <td>
+                            {{ form_widget(form.toPostalcode) }}
+                        </td>
+                        <td>
+                            {{ form_widget(form.amount) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            {{ form_widget(form.price) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="collectionControls">
+
+                        </td>
+                    </tr>
+                    </tbody>
+                {% endmacro %}
+
+                <table data-prototype="{{ _self.postalcode_prototype(optionForm.postalcodePrices.vars.prototype)|escape }}">
+                    <thead>
+                    <tr>
+                        <th>{{ "shipmentgateway.plain.frompostalcode"|trans }}</th>
+                        <th>{{ "shipmentgateway.plain.topostalcode"|trans }}</th>
+                        <th>{{ "shipmentgateway.plain.amount"|trans }}</th>
+                    </tr>
+                    </thead>
+                    {% for widget in optionForm.postalcodePrices %}
+                        {{ _self.postalcode_prototype(widget) }}
+                    {% endfor %}
+                    {% do optionForm.postalcodePrices.setRendered %}
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+

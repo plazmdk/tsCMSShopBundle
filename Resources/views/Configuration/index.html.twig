@@ -9,6 +9,7 @@
                         <li class="active"><a href="#generel" data-toggle="tab">{{ "config.generel"|trans }}</a></li>
                         <li><a href="#urls" data-toggle="tab">{{ "config.urls"|trans }}</a></li>
                         <li><a href="#templates" data-toggle="tab">{{ "config.templates"|trans }}</a></li>
+                        <li><a href="#shipment" data-toggle="tab">{{ "config.shipment"|trans }}</a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="generel">
@@ -25,10 +26,15 @@
                             {{ form_row(form.approvedPaymentUrl) }}
                             {{ form_row(form.failedPaymentUrl) }}
                             {{ form_row(form.paymentCallbackUrl) }}
+                            {{ form_row(form.openCartUrl) }}
                         </div>
                         <div class="tab-pane" id="templates">
                             {{ form_row(form.orderConfirmationTemplate) }}
                             {{ form_row(form.orderInvoiceTemplate) }}
+                        </div>
+                        <div class="tab-pane" id="shipment">
+                            {{ form_row(form.shipmentRequireMatch) }}
+                            {{ form_row(form.shipmentFallbackMethod) }}
                         </div>
                     </div>
                 </div>

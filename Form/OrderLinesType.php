@@ -23,6 +23,16 @@ class OrderLinesType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('lines', 'infinite_form_polycollection',array(
+                'types' => array(
+                    'tscms_shop_productorderline',
+                    'tscms_shop_shipmentorderline'
+                ),
+                'by_reference' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+            ))
+
             ->add('note', 'textarea', array(
                 'label' => 'order.note',
                 'required' => false

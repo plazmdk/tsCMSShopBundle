@@ -6,6 +6,6 @@
     <h1>{{ product.title }}</h1>
     {{ product.description|raw }}
 
-    {{ product|currency }}
+    {{ tscms_shop_pricecalc(product)|currency }}
     {{ form(buy_form) }}
 {% endblock %}

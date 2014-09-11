@@ -14,8 +14,12 @@ use tsCMS\ShopBundle\Entity\OrderLine;
 use tsCMS\ShopBundle\Entity\PaymentTransaction;
 use tsCMS\ShopBundle\Entity\Product;
 use tsCMS\ShopBundle\Entity\Productlist;
+use tsCMS\ShopBundle\Entity\ProductOrderLine;
+use tsCMS\ShopBundle\Entity\ShipmentMethod;
+use tsCMS\ShopBundle\Entity\ShipmentOrderLine;
 use tsCMS\ShopBundle\Form\BasketType;
 use tsCMS\ShopBundle\Form\OrderDetailsType;
+use tsCMS\ShopBundle\Form\OrderPaymentType;
 use tsCMS\ShopBundle\Form\OrderShipmentType;
 use tsCMS\ShopBundle\Interfaces\PaymentGatewayInterface;
 use tsCMS\ShopBundle\Model\PaymentAuthorize;
@@ -38,8 +42,20 @@ class ShopController extends Controller
      */
     public function productAction(Product $product, Request $request)
     {
-        $buyFormBuilder = $this->createFormBuilder(array("amount" => 1));
+        /** @var BasketService $basket */
+        $basket = $this->get("tsCMS_shop.basketservice");
+        $order = $basket->getOrder();
 
+        $fixedShipmentLine = null;
+        if ($order) {
+            foreach ($order->getLines() as $line) {
+                if ($line instanceof ShipmentOrderLine && $line->isFixedPrice()) {
+                    $fixedShipmentLine = $line;
+                }
+            }
+        }
+
+        $buyFormBuilder = $this->createFormBuilder(array("amount" => 1));
         $buyFormBuilder->add("amount", "number", array(
             "label" => "basket.amount"
 
@@ -47,20 +63,26 @@ class ShopController extends Controller
         $buyFormBuilder->add("buy","submit", array(
             "label" => "basket.buy"
         ));
+        if ($fixedShipmentLine) {
+            $buyFormBuilder->add("overrideFixedPriceShipment", "checkbox", array(
+                "label" => "basket.overrideFixedPriceShipment",
+                "required" => true
+            ));
+        }
+
         $buyForm = $buyFormBuilder->getForm();
         $buyForm->handleRequest($request);
         if ($buyForm->isValid()) {
-            $item = new Item();
-            $item->setAmount(intval($buyForm->getData()["amount"]));
-            $item->setProductPrice($product->getPrice());
-            $item->setPartnumber($product->getPartnumber());
-            $item->setPlugin("Shop");
-            $item->setProductId($product->getId());
-            $item->setTitle($product->getTitle());
-            $item->setVat($product->getVatGroup()->getPercentage());
-            /** @var BasketService $basket */
-            $basket = $this->get("tsCMS_shop.basketservice");
-            $basket->addItem($item);
+            if ($fixedShipmentLine) {
+                $basket->removeLine($fixedShipmentLine);
+            }
+
+            $productOrderLine = new ProductOrderLine();
+            $productOrderLine->setProduct($product);
+            $productOrderLine->setAmount($buyForm->getData()["amount"]);
+            $productOrderLine->setPrice($product->getPrice());
+
+            $basket->addLine($productOrderLine);
 
             return $this->redirect($this->generateUrl($request->get("_route")));
         }
@@ -89,23 +111,27 @@ class ShopController extends Controller
     {
         /** @var BasketService $basketService */
         $basketService = $this->get("tsCMS_shop.basketservice");
-        $basket = $basketService->getBasket();
+        $order = $basketService->getOrder();
+
+        if (!$order) {
+            $order = new Order();
+        }
 
         if ($request->isMethod("POST")) {
-            $items = $basket->getItems();
+            $lines = $order->getLines();
 
             // If updating a single row (by ajax)
             if ($request->request->get("single", false)) {
                 $key = $request->request->get("key");
                 $value = $request->request->get("value");
-                if (isset($items[$key])) {
-                    $item = $items[$key];
-                    $item->setAmount(intval($value));
-                    $basketService->updateItem($item);
+                if (isset($lines[$key]) && !$lines[$key]->isFixedPrice()) {
+                    $line = $lines[$key];
+                    $line->setAmount(intval($value));
+                    $basketService->updateLine($line);
 
-                    if ($item->getAmount() > 0) {
+                    if ($line->getAmount() > 0) {
                         // Item was updated - refresh view
-                        return $this->render("tsCMSShopBundle:Shop:item.html.twig",array("item" => $item, "key" => $key));
+                        return $this->render("tsCMSShopBundle:Shop:item.html.twig",array("item" => $line, "key" => $key));
                     }
                 }
                 // the item was not found or removed
@@ -115,10 +141,10 @@ class ShopController extends Controller
             $amounts = $request->request->get("amounts",array());
 
             foreach ($amounts as $key => $amount) {
-                if (isset($items[$key])) {
-                    $item = $items[$key];
-                    $item->setAmount(intval($amount));
-                    $basketService->updateItem($item);
+                if (isset($lines[$key]) && !$lines[$key]->isFixedPrice()) {
+                    $line = $lines[$key];
+                    $line->setAmount(intval($amount));
+                    $basketService->updateLine($line);
                 }
             }
 
@@ -126,7 +152,7 @@ class ShopController extends Controller
         }
 
         return array(
-            "basket" => $basket
+            "basket" => $order
         );
     }
 
@@ -142,36 +168,16 @@ class ShopController extends Controller
             return $this->redirect("/");
         }
 
-        /** @var ShopService $shopService */
-        $shopService = $this->get("tsCMS_shop.shopservice");
-        $order = $shopService->getOrder();
-
-        foreach ($order->getLines() as $line) {
-            $order->removeLine($line);
-        }
-
-        foreach ($basket->getItems() as $item) {
-            $line = new OrderLine();
-            $line->setAmount($item->getAmount());
-            $line->setPartnumber($item->getPartnumber());
-            $line->setPlugin($item->getPlugin());
-            $line->setPricePerUnit($item->getProductPrice());
-            $line->setVat($item->getVat());
-            $line->setProductId($item->getProductId());
-            $line->setTitle($item->getTitle());
-            $order->addLine($line);
-        }
-
-        $form = $this->createForm(new OrderDetailsType(), $order);
+        $form = $this->createForm(new OrderDetailsType(), $basket->getOrder());
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-
+            $basket->save();
             return $this->redirect($this->generateUrl(Config::SELECT_SHIPMENT_ROUTE_NAME));
         }
 
         return array(
-            "order" => $order,
+            "order" => $basket->getOrder(),
             "orderDetailsForm" => $form->createView()
         );
     }
@@ -184,9 +190,6 @@ class ShopController extends Controller
         /** @var BasketService $basket */
         $basket = $this->get("tsCMS_shop.basketservice");
 
-        /** @var ShopService $shopService */
-        $shopService = $this->get("tsCMS_shop.shopservice");
-
         /** @var ShipmentService $shipmentService */
         $shipmentService = $this->get("tsCMS_shop.shipmentservice");
 
@@ -194,12 +197,20 @@ class ShopController extends Controller
             return $this->redirect("/");
         }
 
-        $order = $shopService->getOrder();
-        $form = $this->createForm(new OrderShipmentType(), $order);
+        $order = $basket->getOrder();
+
+        $selectedShipmentMethod = null;
+        foreach ($order->getLines() as $line) {
+            if ($line instanceof ShipmentOrderLine) {
+                $selectedShipmentMethod = $line->getShipmentMethod();
+            }
+        }
+
+        $form = $this->createForm(new OrderShipmentType($shipmentService, $selectedShipmentMethod, $order), $order);
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $shipmentService->addShipmentToOrder($order, $form['shipmentMethod']->getData());
-
+            $shipmentService->addShipmentToOrder($basket->getOrder(), $form['shipmentMethod']->getData());
+            $basket->save();
             return $this->redirect($this->generateUrl(Config::SELECT_PAYMENT_ROUTE_NAME));
         }
 
@@ -217,9 +228,6 @@ class ShopController extends Controller
         /** @var BasketService $basket */
         $basket = $this->get("tsCMS_shop.basketservice");
 
-        /** @var ShopService $shopService */
-        $shopService = $this->get("tsCMS_shop.shopservice");
-
         /** @var PaymentService $paymentService */
         $paymentService = $this->get("tsCMS_shop.paymentservice");
 
@@ -227,24 +235,13 @@ class ShopController extends Controller
             return $this->redirect("/");
         }
 
-        $order = $shopService->getOrder();
-        $formBuilder = $this->createFormBuilder($order);
-        $formBuilder->add("paymentMethod","entity", array(
-            "class" => "tsCMS\\ShopBundle\\Entity\\PaymentMethod",
-            "property" => "title",
-            "choices" => $paymentService->getPaymentMethods(),
-            "expanded" => true,
-            "label" => "paymentmethod.choose"
-        ));
-        $formBuilder->add("save", "submit", array(
-            "label" => "paymentmethod.save"
-        ));
+        $order = $basket->getOrder();
 
-        $form = $formBuilder->getForm();
+        $form = $this->createForm(new OrderPaymentType($paymentService), $order);
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $this->getDoctrine()->getManager()->persist($order);
-            $this->getDoctrine()->getManager()->flush();
+
+            $basket->save();
             return $this->redirect($this->generateUrl(Config::CONFIRM_ORDER_ROUTE_NAME));
         }
 
@@ -258,12 +255,12 @@ class ShopController extends Controller
      * @Template()
      */
     public function confirmOrderAction() {
-        /** @var ShopService $shopService */
-        $shopService = $this->get("tsCMS_shop.shopservice");
+        /** @var BasketService $basket */
+        $basket = $this->get("tsCMS_shop.basketservice");
         /** @var PaymentService $paymentService */
         $paymentService = $this->get("tsCMS_shop.paymentservice");
 
-        $order = $shopService->getOrder();
+        $order = $basket->getOrder();
 
         $paymentGateway = $paymentService->getPaymentGateway($order->getPaymentMethod());
 
@@ -324,6 +321,7 @@ class ShopController extends Controller
 
         $order->setStatus($orderStatus);
         $order->setPaymentStatus($paymentStatus);
+        $order->setCart(false);
 
         // add a transaction to the order
         $paymentTransaction = new PaymentTransaction();
@@ -369,9 +367,9 @@ class ShopController extends Controller
      * @Template()
      */
     public function paymentFailedAction(Request $request) {
-        /** @var ShopService $shopService */
-        $shopService = $this->get("tsCMS_shop.shopservice");
-        $order = $shopService->getOrder();
+        /** @var BasketService $basket */
+        $basket = $this->get("tsCMS_shop.basketservice");
+        $order = $basket->getOrder();
         return array(
             "confirmLink" => $this->generateUrl(Config::CONFIRM_ORDER_ROUTE_NAME),
             "order" => $order
@@ -386,18 +384,25 @@ class ShopController extends Controller
         $basket = $this->get("tsCMS_shop.basketservice");
         $basket->clear();
 
-        /** @var ShopService $shopService */
-        $shopService = $this->get("tsCMS_shop.shopservice");
-        $order = $shopService->getOrder();
+        /** @var BasketService $basket */
+        $basket = $this->get("tsCMS_shop.basketservice");
+        $order = $basket->getOrder();
 
         if (!$order->getId()) {
             return $this->redirect("/");
         }
 
-        $shopService->getOrder(true);
+        $basket->newOrder();
 
         return array(
             "order" => $order
         );
+    }
+
+    public function openCartAction($id,Request $request) {
+        /** @var BasketService $basket */
+        $basket = $this->get("tsCMS_shop.basketservice");
+        $basket->openCart($id);
+        return $this->redirect($this->generateUrl(Config::BASKET_ROUTE_NAME));
     }
 }

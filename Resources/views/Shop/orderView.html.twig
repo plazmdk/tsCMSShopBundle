@@ -47,14 +47,14 @@
             </tr>
             </thead>
             <tbody>
-            {% for key,item in order.lines %}
-                {% include "tsCMSShopBundle:Shop:item.html.twig" with {key: key, item: item, noInput: true} %}
+            {% for key,line in order.lines %}
+                {% include "tsCMSShopBundle:Shop:item.html.twig" with {key: key, line: line, noInput: true} %}
             {% endfor %}
             </tbody>
             <tfoot>
             <tr>
                 <td colspan="3"></td>
-                <td class="price total">{{ order|currency }}</td>
+                <td class="price total">{{ tscms_shop_totalcalc(order)|currency }}</td>
             </tr>
             </tfoot>
         </table>

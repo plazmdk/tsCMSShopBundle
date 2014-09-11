@@ -1,22 +1,44 @@
-$(document).on("change",".priceCalc",function() {
-    var input = $(this), target = null, factor = 1;
-    var wrapper = input.closest(".form-group").parent().parent();
-    var percentage = parseFloat(wrapper.find("select[data-price-group='"+input.data("price-group")+"']").find("option:selected").data("percentage"));
-    if (input.data("price-vat")) {
-        target = wrapper.find(".priceCalc[data-price-group='"+input.data("price-group")+"'][data-price-vat='false']");
-        factor = 100 / (100 + percentage);
-    } else {
-        target = wrapper.find(".priceCalc[data-price-group='"+input.data("price-group")+"'][data-price-vat='true']");
-        factor = (100 + percentage) / 100;
+$(document).on("click",".modalToggle", function(e) {
+    e.preventDefault();
+    var toggle = $(this);
+    toggle.nextAll(".modal").modal();
+});
+$(document).on("change", ".priceNoVat", function() {
+    var inputNoVat = $(this);
+    var val = inputNoVat.val().replace(",",".");
+
+    var form = inputNoVat.closest("form,.box");
+    var priceRow = inputNoVat.closest(".row");
+    var inputVat = priceRow.find(".priceVat");
+    if (inputVat) {
+        var vatGroup = form.find(".vatGroup");
+        var percentage = parseFloat(vatGroup.find("option:selected").data("percentage"));
+        inputVat.val(formatPrice(val * (100 + percentage) / 100));
     }
-    var value = input.val().replace(",",".");
-    target.val(formatPrice(value * factor));
-    input.val(formatPrice(value));
+
+    inputNoVat.val(formatPrice(val));
 });
-$(document).on("change","select[data-price-group]", function() {
-    var wrapper = $(this).closest(".form-group").parent().parent();
-    wrapper.find(".priceCalc[data-price-group='"+$(this).data("price-group")+"'][data-price-vat='false']").change();
+$(document).on("change", ".priceVat", function() {
+    var inputVat = $(this);
+    var val = inputVat.val().replace(",",".");
+
+    var form = inputVat.closest("form,.box");
+    var priceRow = inputVat.closest(".row");
+    var inputNoVat = priceRow.find(".priceNoVat");
+
+    var percentage = parseFloat(vatGroup.find("option:selected").data("percentage"));
+
+    inputNoVat.val(formatPrice(val * 100 / (100 + percentage)));
+    inputVat.val(formatPrice(val));
 });
+$(document).on("change", ".vatGroup", function() {
+    var vatGroup = $(this);
+    var form = vatGroup.closest("form,.box");
+
+    form.find(".priceNoVat").change();
+});
+$(".priceNoVat").change();
+
 function formatPrice(price) {
     return parseFloat(Math.round(price * 100) / 100).toFixed(2).replace(".",",");
 }
