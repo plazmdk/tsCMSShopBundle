@@ -35,6 +35,10 @@ class Product implements PathInterface, PriceInterface {
     /**
      * @ORM\Column(type="string", nullable=true)
      */
+    protected $teaser;
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
     protected $partnumber;
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -110,6 +114,22 @@ class Product implements PathInterface, PriceInterface {
         $this->variantProducts = new ArrayCollection();
         $this->categories = new ArrayCollection();
         $this->images = new ArrayCollection();
+    }
+
+    /**
+     * @param mixed $teaser
+     */
+    public function setTeaser($teaser)
+    {
+        $this->teaser = $teaser;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTeaser()
+    {
+        return $this->teaser;
     }
 
     /**

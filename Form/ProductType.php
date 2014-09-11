@@ -30,6 +30,10 @@ class ProductType extends AbstractType {
                     "class" => "productPath route"
                 )
             ))
+            ->add('teaser', 'textarea',array(
+                'label' => 'product.teaser',
+                'required' => false
+            ))
             ->add('partnumber', 'text',array(
                 'label' => 'product.partnumber',
                 'required' => true

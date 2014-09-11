@@ -4,6 +4,7 @@ product:
   edit: Rediger
   information: Produktinformation
   title: Produktnavn
+  teaser: Teaser
   path: URL
   partnumber: Varenr.
   description: Beskrivelse
