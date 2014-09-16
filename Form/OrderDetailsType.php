@@ -31,6 +31,9 @@ class OrderDetailsType extends AbstractType {
             ))
             ->add("save","submit",array(
                 'label' => 'order.next',
+                'attr' => array(
+                    'class' => 'btn btn-primary'
+                )
             ));
         ;
     }

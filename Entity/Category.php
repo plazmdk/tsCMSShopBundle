@@ -9,6 +9,7 @@
 namespace tsCMS\ShopBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use TJB\FormExtensionsBundle\Interfaces\SearchableTree;
 use tsCMS\SystemBundle\Entity\Route;
 
 /**
@@ -16,7 +17,7 @@ use tsCMS\SystemBundle\Entity\Route;
  * @ORM\Table(name="category")
  * @ORM\Entity(repositoryClass="Gedmo\Tree\Entity\Repository\NestedTreeRepository")
  */
-class Category {
+class Category implements SearchableTree {
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -165,4 +166,16 @@ class Category {
     }
 
 
-} 
+    public function getParentPath()
+    {
+        $treeNode = $this->getParent();
+        $path = array();
+
+        while($treeNode) {
+            $path[] = array("id" => $treeNode->getId(), "title" => $treeNode->getTitle());
+            $treeNode = $treeNode->getParent();
+        }
+
+        return $path;
+    }
+}

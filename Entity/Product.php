@@ -33,7 +33,7 @@ class Product implements PathInterface, PriceInterface {
      */
     protected $title;
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $teaser;
     /**
@@ -41,7 +41,7 @@ class Product implements PathInterface, PriceInterface {
      */
     protected $partnumber;
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $description;
     /**

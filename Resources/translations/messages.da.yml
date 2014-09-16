@@ -82,6 +82,7 @@ config:
 basket:
   title: Kurv
   fixedPrice: Låst
+  productTitle: Navn
   pricePerUnit: Pris per stk.
   price: Pris
   amount: Antal

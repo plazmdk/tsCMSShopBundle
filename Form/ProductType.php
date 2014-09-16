@@ -68,10 +68,10 @@ class ProductType extends AbstractType {
                 'descriptionField' => 'description',
                 'positionField' => 'position'
             ))
-            ->add('categories', 'entity', array(
-                'class'         => 'tsCMSShopBundle:Category',
-                'label'         => 'product.categories',
-                'multiple'      => true
+            ->add('categories', 'tjb_treepicker_type', array(
+                'class' => 'tsCMSShopBundle:Category',
+                'label' => 'product.categories',
+                'multiple' => true
             ))
             ->add("save","submit",array(
                 'label' => 'product.save',
