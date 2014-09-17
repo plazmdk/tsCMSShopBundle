@@ -111,6 +111,10 @@
                         label.attr("for", label.attr("for").replace("_P_", count));
                     }
                 });
+                paymentMethods.find(".box").each(function(index) {
+                    var method = $(this);
+                    method.find("input[name$='[position]']").val(index);
+                });
             },
             stop: function( event, ui ) {
                 paymentMethods.find(".box").each(function(index) {
