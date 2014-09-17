@@ -43,7 +43,8 @@ class Plain implements PaymentGatewayInterface {
     public function getOptionForm(FormBuilderInterface $formBuilder)
     {
         $formBuilder->add("fee","tscms_shop_price", array(
-            "label" => "paymentgateway.plain.fee"
+            "label" => "paymentgateway.plain.fee",
+            "required" => false
         ));
     }
 
