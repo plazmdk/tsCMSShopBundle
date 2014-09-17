@@ -83,7 +83,7 @@
                     var result = false;
                     $(this).find("input,textarea,select,button").each(function() {
                         var field = $(this);
-                        if (field.attr("name").indexOf("_P_") != -1) {
+                        if (field.attr("name") && field.attr("name").indexOf("_P_") != -1) {
                             result = result || true;
                         }
                     });
