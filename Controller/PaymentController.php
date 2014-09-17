@@ -156,8 +156,7 @@ class PaymentController extends Controller {
         $formBuilder->add("position", "hidden", array("required" => false));
         $formBuilder->add("gateway", "hidden", array("required" => false));
         $formBuilder->add("title",  "text", array(
-            "label" => "paymentmethod.title",
-            "required" => false
+            "label" => "paymentmethod.title"
         ));
         $formBuilder->add("description", "textarea", array(
             "label" => "paymentmethod.description",
