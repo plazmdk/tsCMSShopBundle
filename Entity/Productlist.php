@@ -33,6 +33,10 @@ class Productlist implements PathInterface {
      */
     protected $title;
     /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $content;
+    /**
      * @ORM\OneToMany(targetEntity="ProductlistProduct", mappedBy="productlist", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      */
@@ -125,6 +129,22 @@ class Productlist implements PathInterface {
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @param mixed $content
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getContent()
+    {
+        return $this->content;
     }
 
     /**

@@ -23,6 +23,7 @@ class ProductlistType extends AbstractType {
                 'required' => true,
                 "attr" => array("class" => "productlistTitle")
             ))
+            ->add("content", "editor", array("required" => false, "label"  => "productlist.content"))
             ->add("path", "route", array(
                 "required" => false,
                 "label"  => "productlist.path",
@@ -37,10 +38,10 @@ class ProductlistType extends AbstractType {
                 'allow_delete'   => true,
                 'type'           => new ProductlistProductType()
             ))
-            ->add('categories', 'entity', array(
-                'label'          => 'productlist.categories',
-                'multiple'       => true,
-                'class'          => 'tsCMS\ShopBundle\Entity\Category'
+            ->add('categories', 'tjb_treepicker_type', array(
+                'class' => 'tsCMSShopBundle:Category',
+                'label' => 'productlist.categories',
+                'multiple' => true
             ))
             ->add("save","submit",array(
                 'label' => 'productlist.save',
