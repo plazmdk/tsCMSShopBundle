@@ -133,6 +133,8 @@ order:
   confirm: Godkend
   create: Opret ordre
 
+  filter: Filtrer ordrer
+
 customerDetails:
   name: Navn
   address: Adresse

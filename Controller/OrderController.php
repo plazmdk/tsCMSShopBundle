@@ -8,6 +8,9 @@
 
 namespace tsCMS\ShopBundle\Controller;
 
+use Doctrine\ORM\QueryBuilder;
+use Lexik\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
+use Lexik\Bundle\FormFilterBundle\Tests\Filter\Doctrine\DoctrineQueryBuilderUpdater;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -18,6 +21,7 @@ use tsCMS\ShopBundle\Entity\ProductOrderLine;
 use tsCMS\ShopBundle\Entity\ShipmentOrderLine;
 use tsCMS\ShopBundle\Form\CreateOrderType;
 use tsCMS\ShopBundle\Form\OrderCustomerDetailsType;
+use tsCMS\ShopBundle\Form\OrderFilterType;
 use tsCMS\ShopBundle\Form\OrderLinesType;
 use tsCMS\ShopBundle\Form\OrderStatusType;
 use tsCMS\ShopBundle\Model\PaymentCapture;
@@ -37,11 +41,28 @@ class OrderController extends Controller {
      */
     public function indexAction(Request $request)
     {
+        /** @var QueryBuilder $orderQueryBuilder */
+        $orderQueryBuilder = $this->getDoctrine()->getRepository("tsCMSShopBundle:Order")->createQueryBuilder("o");
+        $orderQueryBuilder->orderBy("o.date");
+        $orderQueryBuilder->where("o.cart = 0");
+
+        $orderFilterForm = $this->createForm(new OrderFilterType());
+        $orderFilterForm->handleRequest($request);
+
+        if ($orderFilterForm->isValid()) {
+            /** @var FilterBuilderUpdaterInterface $filterQueryBuilderUpdater */
+            $filterQueryBuilderUpdater = $this->get('lexik_form_filter.query_builder_updater');
+            $filterQueryBuilderUpdater->addFilterConditions($orderFilterForm, $orderQueryBuilder);
+        } else {
+            $orderQueryBuilder->andWhere("o.status = :status")->setParameter("status", Statuses::ORDER_RECEIVED);
+        }
+
         /** @var Order[] $orders */
-        $orders = $this->getDoctrine()->getRepository("tsCMSShopBundle:Order")->findBy(array("status" => Statuses::ORDER_RECEIVED));
+        $orders = $orderQueryBuilder->getQuery()->getResult();
 
         if ($request->isMethod("POST")) {
             /** @var PaymentService $paymentService */
+
             $paymentService = $this->get("tsCMS_shop.paymentservice");
 
             $successCount = 0;
@@ -74,6 +95,7 @@ class OrderController extends Controller {
         }
 
         return array(
+            "filterForm" => $orderFilterForm->createView(),
             "orders" => $orders
         );
     }

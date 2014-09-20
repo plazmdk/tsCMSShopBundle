@@ -1,6 +1,33 @@
 {% extends 'tsCMSSystemBundle::layout.html.twig' %}
 {% block title %}{{ "orders"|trans }}{% endblock %}
 {% block content %}
+    <div class="box collapsed-box">
+        <div class="box-header">
+            <div class="box-title">
+                {{ "order.filter"|trans }}
+            </div>
+            <div class="box-tools pull-right">
+                <button class="btn btn-default btn-sm" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-plus"></i></button>
+            </div>
+        </div>
+        <div class="box-body" style="display: none;">
+            {{ form_start(filterForm) }}
+            <div class="row">
+                <div class="col-lg-2">
+                    {{ form_row(filterForm.status) }}
+                </div>
+                <div class="col-lg-2">
+                    {{ form_row(filterForm.paymentStatus) }}
+                </div>
+                <div class="col-lg-2">
+                    {{ form_row(filterForm.date) }}
+                </div>
+
+            </div>
+            {{ form_row(filterForm.save) }}
+            {{ form_end(filterForm) }}
+        </div>
+    </div>
     <form method="post">
         <table class="table table-hover">
             <thead>
@@ -25,7 +52,7 @@
                             {{ order.id }}
                         </td>
                         <td>
-                            {{ order.customerDetails.name }}
+                            {{ order.customerDetails ? order.customerDetails.name : '' }}
                         </td>
                         <td>
                             {{ ("orderstatus."~ order.status)|trans }}
