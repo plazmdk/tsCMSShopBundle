@@ -61,7 +61,10 @@ class ShopController extends Controller
 
         ));
         $buyFormBuilder->add("buy","submit", array(
-            "label" => "basket.buy"
+            "label" => "basket.buy",
+            "attr" => array(
+                "class" => "btn btn-success"
+            )
         ));
         if ($fixedShipmentLine) {
             $buyFormBuilder->add("overrideFixedPriceShipment", "checkbox", array(
