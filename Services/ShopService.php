@@ -74,7 +74,7 @@ class ShopService {
     /**
      * @param Productlist $productlist
      */
-    public function getProductlistProducts(Productlist $productlist) {
+    public function getProductlistProducts(Productlist $productlist, $perPage = null) {
         $qb = $this->em->createQueryBuilder();
         $qb->from("tsCMSShopBundle:Product","p");
         $qb->leftJoin("p.images","i");
@@ -97,7 +97,19 @@ class ShopService {
             $qb->setParameter(":categories", $productlist->getCategories()->getValues());
         }
 
-        return $qb->getQuery()->getResult();
+        if ($perPage) {
+            $paginator  = $this->container->get('knp_paginator');
+            $result = $paginator->paginate(
+                $qb->getQuery(),
+                $this->container->get('request')->query->get('p', 1)/*page number*/,
+                $perPage
+            );
+
+        } else {
+            $result = $qb->getQuery()->getResult();
+        }
+
+        return $result;
     }
 
     public function onGetTemplateTypesEvent(GetTemplateTypesEvent $event) {

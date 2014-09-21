@@ -27,12 +27,15 @@ class OrderDetailsType extends AbstractType {
             ))
             ->add('note', 'textarea', array(
                 'label' => 'order.note',
-                'required' => false
+                'required' => false,
+                'attr' => array(
+                    'rows' => 5
+                )
             ))
             ->add("save","submit",array(
                 'label' => 'order.next',
                 'attr' => array(
-                    'class' => 'btn btn-primary'
+                    'class' => 'btn btn-success'
                 )
             ));
         ;

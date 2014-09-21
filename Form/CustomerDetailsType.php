@@ -40,7 +40,7 @@ class CustomerDetailsType extends AbstractType
             ))
             ->add('country','text', array(
                 'label' => 'customerDetails.country',
-                'required' => true
+                'required' => false
             ))
             ->add('email','email', array(
                 'label' => 'customerDetails.email',
