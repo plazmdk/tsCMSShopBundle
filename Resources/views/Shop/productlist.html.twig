@@ -9,6 +9,7 @@
         <b><a href="{{ product.path }}">{{ product.title }}</a></b>
         <br/>
     {% endfor %}
-
-    {{ knp_pagination_render(products) }}
+    {% if products.count is defined %}
+        {{ knp_pagination_render(products) }}
+    {% endif %}
 {% endblock %}

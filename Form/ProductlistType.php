@@ -43,6 +43,10 @@ class ProductlistType extends AbstractType {
                 'label' => 'productlist.categories',
                 'multiple' => true
             ))
+            ->add("pagination","number",array(
+                'label' => 'productlist.pagination',
+                'required' => false
+            ))
             ->add("save","submit",array(
                 'label' => 'productlist.save',
             ));

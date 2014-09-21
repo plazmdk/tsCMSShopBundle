@@ -37,6 +37,10 @@ class Productlist implements PathInterface {
      */
     protected $content;
     /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $pagination;
+    /**
      * @ORM\OneToMany(targetEntity="ProductlistProduct", mappedBy="productlist", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      */
@@ -170,4 +174,19 @@ class Productlist implements PathInterface {
         $this->categories->removeElement($category);
     }
 
+    /**
+     * @param mixed $pagination
+     */
+    public function setPagination($pagination)
+    {
+        $this->pagination = $pagination;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPagination()
+    {
+        return $this->pagination;
+    }
 }

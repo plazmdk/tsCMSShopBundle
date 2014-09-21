@@ -99,6 +99,7 @@ productlist:
   title: Titel
   content: Indhold
   path: URL
+  pagination: Begræns antal produkter per side
 
   search: Søgekriterier
   singleProducts: Ekstra tilknyttede varer
