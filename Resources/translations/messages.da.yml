@@ -117,6 +117,7 @@ order:
   alternativeShipmentDetails: Levering til anden adresse
   noShipmentDetails: Der vil blive leveret til samme adresse som der faktureres til.
   shipmentMethod: Leveringsmetode
+  paymentMethod: Betalingsmetode
   note: Bemærkninger
   status: Status
   paymentStatus: Betalingsstatus
