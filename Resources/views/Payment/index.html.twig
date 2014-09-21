@@ -96,8 +96,12 @@
                 var count = all.length;
                 item.find("input,textarea,select,button").each(function() {
                     var field = $(this);
-                    field.attr("name", field.attr("name").replace("_P_", count));
-                    field.attr("id", field.attr("id").replace("_P_", count));
+                    if (field.attr("name")) {
+                        field.attr("name", field.attr("name").replace("_P_", count));
+                    }
+                    if (field.attr("id")) {
+                        field.attr("id", field.attr("id").replace("_P_", count));
+                    }
                 });
                 item.find("div").each(function() {
                     var box = $(this);
