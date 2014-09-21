@@ -41,7 +41,7 @@ class OrderPaymentType extends AbstractType {
             ->add("save","submit",array(
                 'label' => 'order.save',
                 'attr' => array(
-                    'class' => array('btn btn-success')
+                    'class' => 'btn btn-success'
                 )
             ));
 
