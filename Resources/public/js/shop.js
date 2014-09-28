@@ -26,6 +26,7 @@ $(document).on("change", ".priceVat", function() {
     var priceRow = inputVat.closest(".row");
     var inputNoVat = priceRow.find(".priceNoVat");
 
+    var vatGroup = form.find(".vatGroup");
     var percentage = parseFloat(vatGroup.find("option:selected").data("percentage"));
 
     inputNoVat.val(formatPrice(val * 100 / (100 + percentage)));
