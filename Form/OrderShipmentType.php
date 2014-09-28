@@ -45,6 +45,7 @@ class OrderShipmentType extends AbstractType {
                 'label' => 'order.shipmentMethod',
                 'class' => 'tsCMSShopBundle:ShipmentMethod',
                 'option_attributes' => array('data-allowdeliveryaddress' => 'deliveryAddressAllowed'),
+                'option_details' => array("description" => "description"),
                 'choices' => $this->shipmentService->getPossibleShipmentMethods($this->order),
                 'property' => 'title',
                 'expanded' => true,

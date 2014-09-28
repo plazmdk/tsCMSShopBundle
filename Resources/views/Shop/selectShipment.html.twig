@@ -6,7 +6,11 @@
     {{ form_start(orderShipmentForm) }}
     <div class="row">
         <div class="grid-100" id="shipmentOptions">
-            {{ form_row(orderShipmentForm.shipmentMethod) }}
+            {% for child in orderShipmentForm.shipmentMethod %}
+                {{ form_row(child) }}
+                {{ child.vars.description }}
+            {% endfor %}
+
         </div>
     </div>
     <div class="row">
