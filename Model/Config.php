@@ -15,6 +15,8 @@ use tsCMS\TemplateBundle\Entity\Template;
 class Config {
     const PRODUCT_URL = "tsCMS_shop_productUrl";
     const BASKET_ROUTE_NAME = "basket";
+
+    const SINGLE_PAGE_CHECKOUT = "singlePageCheckout";
     const CHECKOUT_ROUTE_NAME = "checkout";
     const SELECT_SHIPMENT_ROUTE_NAME = "selectShipment";
     const SELECT_PAYMENT_ROUTE_NAME = "selectPayment";
@@ -23,6 +25,9 @@ class Config {
     const FAILED_PAYMENT_ROUTE_NAME = "failedPayment";
     const PAYMENT_CALLBACK_ROUTE_NAME = "paymentCallback";
     const OPEN_CART_ROUTE_NAME = "openCart";
+
+
+    private $singlePageCheckout;
 
     private $productUrl;
     private $basketUrl;
@@ -49,6 +54,22 @@ class Config {
     const SHIPMENT_FALLBACK_METHOD = "tsCMS_shop_shipmentFallbackMethod";
     private $shipmentRequireMatch;
     private $shipmentFallbackMethod;
+
+    /**
+     * @param mixed $singlePageCheckout
+     */
+    public function setSinglePageCheckout($singlePageCheckout)
+    {
+        $this->singlePageCheckout = $singlePageCheckout;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSinglePageCheckout()
+    {
+        return $this->singlePageCheckout;
+    }
 
     /**
      * @param mixed $basketUrl

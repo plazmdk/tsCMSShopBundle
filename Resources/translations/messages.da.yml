@@ -55,7 +55,12 @@ config:
   shopName: Butiknavn
   shopEmail: Butiksemail
 
-  urls: URLs
+  urls: Checkout
+
+  singlePageCheckout:
+    name: Enkeltsides checkout
+    yes: Ja
+    no: Nej
 
   productUrl: Standard produkt URL - {productId}, {productTitle} og {productVariants} kan bruges til at skabe dynamiske URLs
   basketUrl: URL til kurven

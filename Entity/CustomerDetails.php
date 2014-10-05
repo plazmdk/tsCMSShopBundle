@@ -61,7 +61,7 @@ class CustomerDetails
      *
      * @ORM\Column(name="country", type="string", length=255)
      */
-    private $country;
+    private $country = "Danmark";
 
     /**
      * @var string

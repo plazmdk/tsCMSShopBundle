@@ -35,10 +35,16 @@ class ConfigurationController extends Controller {
 
         /** @var RouteService $routeService */
         $routeService = $this->get("tsCMS.routeService");
+
+        /** @var ConfigService $configService */
+        $configService = $this->get("tsCMS.configService");
+
         $basketRoute = $routeService->getRouteByName(Config::BASKET_ROUTE_NAME);
         if ($basketRoute) {
             $config->setBasketUrl($basketRoute->getPath());
         }
+
+        $config->setSinglePageCheckout($configService->get(Config::SINGLE_PAGE_CHECKOUT));
 
         $checkoutRoute = $routeService->getRouteByName(Config::CHECKOUT_ROUTE_NAME);
         if ($checkoutRoute) {
@@ -80,8 +86,6 @@ class ConfigurationController extends Controller {
             $config->setOpenCartUrl($openCartRoute->getPath());
         }
 
-        /** @var ConfigService $configService */
-        $configService = $this->get("tsCMS.configService");
         $config->setProductUrl($configService->get(Config::PRODUCT_URL));
 
         $templateRepository = $this->getDoctrine()->getRepository("tsCMSTemplateBundle:Template");
@@ -111,6 +115,7 @@ class ConfigurationController extends Controller {
         $form = $this->createForm(new ConfigType($shipmentService), $config);
         $form->handleRequest($request);
         if ($form->isValid()) {
+            $configService->set(Config::SINGLE_PAGE_CHECKOUT, $config->getSinglePageCheckout());
             $routeService->addRoute(Config::BASKET_ROUTE_NAME, "basket", $config->getBasketUrl(), "tsCMSShopBundle:Shop:basket", "shop",array(),array(),false,true);
             $routeService->addRoute(Config::CHECKOUT_ROUTE_NAME, "checkout", $config->getCheckoutUrl(), "tsCMSShopBundle:Shop:checkout", "shop",array(),array(),false,true);
             $routeService->addRoute(Config::SELECT_SHIPMENT_ROUTE_NAME, "selectPayment", $config->getSelectShipmentUrl(), "tsCMSShopBundle:Shop:selectShipment", "shop",array(),array(),false,true);

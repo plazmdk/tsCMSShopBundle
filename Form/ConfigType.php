@@ -29,6 +29,13 @@ class ConfigType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add("singlePageCheckout", "choice", array(
+                "label" => "config.singlePageCheckout.name",
+                "choices" => array(
+                    0 => "config.singlePageCheckout.no",
+                    1 => "config.singlePageCheckout.yes"
+                )
+            ))
             ->add("productUrl","text", array(
                 "label" => "config.productUrl",
             ))

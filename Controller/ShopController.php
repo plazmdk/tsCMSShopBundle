@@ -21,6 +21,7 @@ use tsCMS\ShopBundle\Form\BasketType;
 use tsCMS\ShopBundle\Form\OrderDetailsType;
 use tsCMS\ShopBundle\Form\OrderPaymentType;
 use tsCMS\ShopBundle\Form\OrderShipmentType;
+use tsCMS\ShopBundle\Form\SinglePageCheckoutType;
 use tsCMS\ShopBundle\Interfaces\PaymentGatewayInterface;
 use tsCMS\ShopBundle\Model\PaymentAuthorize;
 use tsCMS\ShopBundle\Model\Config;
@@ -171,15 +172,48 @@ class ShopController extends Controller
             return $this->redirect("/");
         }
 
-        $form = $this->createForm(new OrderDetailsType(), $basket->getOrder());
-        $form->handleRequest($request);
+        /** @var ConfigService $configService */
+        $configService = $this->get("tsCMS.configService");
 
-        if ($form->isValid()) {
-            $basket->save();
-            return $this->redirect($this->generateUrl(Config::SELECT_SHIPMENT_ROUTE_NAME));
+        $singlePage = $configService->get(Config::SINGLE_PAGE_CHECKOUT);
+
+        if ($singlePage) {
+            /** @var ShipmentService $shipmentService */
+            $shipmentService = $this->get("tsCMS_shop.shipmentservice");
+
+            /** @var PaymentService $paymentService */
+            $paymentService = $this->get("tsCMS_shop.paymentservice");
+
+            $order = $basket->getOrder();
+
+            $selectedShipmentMethod = null;
+            foreach ($order->getLines() as $line) {
+                if ($line instanceof ShipmentOrderLine) {
+                    $selectedShipmentMethod = $line->getShipmentMethod();
+                }
+            }
+            $form = $this->createForm(new SinglePageCheckoutType($shipmentService, $selectedShipmentMethod, $paymentService, $basket->getOrder()), $basket->getOrder());
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                $shipmentService->addShipmentToOrder($basket->getOrder(), $form['shipmentMethod']->getData());
+                $basket->save();
+                return $this->redirect($this->generateUrl(Config::CONFIRM_ORDER_ROUTE_NAME));
+            }
+
+        } else {
+            $form = $this->createForm(new OrderDetailsType(), $basket->getOrder());
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                $basket->save();
+                return $this->redirect($this->generateUrl(Config::SELECT_SHIPMENT_ROUTE_NAME));
+            }
         }
 
+
         return array(
+            "singlePage" => $singlePage,
             "order" => $basket->getOrder(),
             "orderDetailsForm" => $form->createView()
         );
