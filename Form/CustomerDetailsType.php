@@ -12,10 +12,12 @@ use tsCMS\ShopBundle\Entity\Category;
 class CustomerDetailsType extends AbstractType
 {
     private $addressOnly;
+    private $noName;
 
-    function __construct($addressOnly = false)
+    function __construct($addressOnly = false, $noName = false)
     {
         $this->addressOnly = $addressOnly;
+        $this->noName = $noName;
     }
 
 
@@ -25,7 +27,7 @@ class CustomerDetailsType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if (!$this->addressOnly) {
+        if (!$this->noName) {
             $builder->add('name','text', array(
                 'label' => 'customerDetails.name',
                 'required' => true
