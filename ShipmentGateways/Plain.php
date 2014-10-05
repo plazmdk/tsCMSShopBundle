@@ -96,7 +96,7 @@ class Plain extends ShipmentGatewayInterface {
 
                     foreach ($this->options['distancePrices'] as $distancePrice) {
                         if ($distance <= $distancePrice['distance']) {
-                            $possiblePrices[] = $distancePrice['price'];
+                            $possiblePrices[] = $distancePrice['price'] * $amount;
                         }
                     }
                 }
