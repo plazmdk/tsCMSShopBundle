@@ -45,7 +45,7 @@ class SinglePageCheckoutType extends AbstractType {
                 'label' => 'order.customerDetails',
                 'required' => true
             ))
-            ->add('shipmentDetails', new CustomerDetailsType(), array(
+            ->add('shipmentDetails', new CustomerDetailsType(true), array(
                 'label' => 'order.shipmentDetails',
                 'required' => false
             ))
