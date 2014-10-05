@@ -29,6 +29,7 @@ class BasketExtension extends \Twig_Extension {
             "miniBasket" => array(
                 "order" => $basketService->getOrder(),
                 "itemCount" => $basketService->getItemCount(),
+                "amountTotal" => $basketService->getAmountTotal(),
                 "total" => $basketService->getTotal(),
                 "totalVat" => $basketService->getTotalVat()
             )
