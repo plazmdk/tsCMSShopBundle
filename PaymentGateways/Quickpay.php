@@ -312,6 +312,10 @@ class Quickpay implements PaymentGatewayInterface
             $result->setCaptured(true);
         }
 
+        if ($params['amount'] != $order->getTotalVat()) {
+            $result->setType(PaymentResult::ERROR);
+        }
+
         $result->setTransactionId($params['transaction']);
 
         return $result;

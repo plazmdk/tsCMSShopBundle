@@ -28,6 +28,7 @@ use tsCMS\ShopBundle\Model\Config;
 use tsCMS\ShopBundle\Model\GatewayUrls;
 use tsCMS\ShopBundle\Model\Item;
 use tsCMS\ShopBundle\Model\PaymentResult;
+use tsCMS\ShopBundle\Model\PaymentStatus;
 use tsCMS\ShopBundle\Model\Statuses;
 use tsCMS\ShopBundle\Services\BasketService;
 use tsCMS\ShopBundle\Services\PaymentService;
@@ -342,6 +343,7 @@ class ShopController extends Controller
         $orderStatus = Statuses::ORDER_RECEIVED;
         $paymentStatus = Statuses::PAYMENT_NO_STATUS;
 
+        $cart = false;
         if ($result->getType() == PaymentResult::AUTHORIZE) {
             $paymentStatus = Statuses::PAYMENT_AUTHORIZED;
 
@@ -354,11 +356,15 @@ class ShopController extends Controller
             if ($result->getCaptured()) {
                 $paymentStatus = Statuses::PAYMENT_SUBSCRIPTION_CAPTURED;
             }
+        } else if ($result->getType() == PaymentResult::ERROR) {
+            $orderStatus = Statuses::ORDER_REJECTED;
+            $paymentStatus = Statuses::PAYMENT_FAILED;
+            $cart = true;
         }
 
         $order->setStatus($orderStatus);
         $order->setPaymentStatus($paymentStatus);
-        $order->setCart(false);
+        $order->setCart($cart);
 
         // add a transaction to the order
         $paymentTransaction = new PaymentTransaction();
@@ -370,26 +376,27 @@ class ShopController extends Controller
 
         $this->getDoctrine()->getManager()->flush();
 
-        // Send the order confirmation email
+        if ($result->getType() != PaymentResult::ERROR) {
+            // Send the order confirmation email
+            /** @var ConfigService $configService */
+            $configService = $this->get("tsCMS.configService");
 
-        /** @var ConfigService $configService */
-        $configService = $this->get("tsCMS.configService");
+            $confirmationTemplateId = $configService->get(Config::CONFIRMATION_TEMPLATE);
+            if ($confirmationTemplateId) {
+                /** @var TemplateService $templateService */
+                $templateService = $this->get("tsCMS_template.templateservice");
 
-        $confirmationTemplateId = $configService->get(Config::CONFIRMATION_TEMPLATE);
-        if ($confirmationTemplateId) {
-            /** @var TemplateService $templateService */
-            $templateService = $this->get("tsCMS_template.templateservice");
+                $template = $templateService->getTemplate($confirmationTemplateId);
+                $mailContent = $templateService->renderTemplate($template, array("order" => $order));
 
-            $template = $templateService->getTemplate($confirmationTemplateId);
-            $mailContent = $templateService->renderTemplate($template, array("order" => $order));
+                $mail = \Swift_Message::newInstance($template->getTitle(), $mailContent, "text/html");
+                $mail->setTo($order->getCustomerDetails()->getEmail(), $order->getCustomerDetails()->getName());
+                $mail->setFrom($configService->get(Config::SHOP_EMAIL),$configService->get(Config::SHOP_NAME));
 
-            $mail = \Swift_Message::newInstance($template->getTitle(), $mailContent, "text/html");
-            $mail->setTo($order->getCustomerDetails()->getEmail(), $order->getCustomerDetails()->getName());
-            $mail->setFrom($configService->get(Config::SHOP_EMAIL),$configService->get(Config::SHOP_NAME));
-
-            /** @var \Swift_Mailer $mailer */
-            $mailer = $this->get('mailer');
-            $mailer->send($mail);
+                /** @var \Swift_Mailer $mailer */
+                $mailer = $this->get('mailer');
+                $mailer->send($mail);
+            }
         }
 
 
@@ -419,17 +426,19 @@ class ShopController extends Controller
     public function paymentApprovedAction(Request $request) {
         /** @var BasketService $basket */
         $basket = $this->get("tsCMS_shop.basketservice");
-        $basket->clear();
-
-        /** @var BasketService $basket */
-        $basket = $this->get("tsCMS_shop.basketservice");
         $order = $basket->getOrder();
 
         if (!$order->getId()) {
             return $this->redirect("/");
         }
 
+        if ($order->getPaymentStatus() == Statuses::PAYMENT_FAILED) {
+            return $this->redirect($this->generateUrl(Config::FAILED_PAYMENT_ROUTE_NAME));
+        }
+
         $basket->newOrder();
+
+
 
         return array(
             "order" => $order
