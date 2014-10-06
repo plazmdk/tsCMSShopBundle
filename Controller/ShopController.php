@@ -105,7 +105,7 @@ class ShopController extends Controller
         $shopService = $this->get("tsCMS_shop.shopservice");
         return array(
             "productlist" => $productlist,
-            "products" => $shopService->getProductlistProducts($productlist, $productlist->getPagination())
+            "products" => $shopService->getProductlistProducts($productlist)
         );
     }
     /**

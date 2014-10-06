@@ -74,7 +74,7 @@ class ShopService {
     /**
      * @param Productlist $productlist
      */
-    public function getProductlistProducts(Productlist $productlist, $perPage = null) {
+    public function getProductlistProducts(Productlist $productlist) {
         $qb = $this->em->createQueryBuilder();
         $qb->from("tsCMSShopBundle:Product","p");
         $qb->leftJoin("p.images","i");
@@ -97,16 +97,33 @@ class ShopService {
             $qb->setParameter(":categories", $productlist->getCategories()->getValues());
         }
 
-        if ($perPage) {
+        switch ($productlist->getSort()) {
+            case Productlist::PRICE:
+                $qb->orderBy("p.price","ASC");
+                break;
+            case Productlist::ALPHA:
+                $qb->orderBy("p.name","ASC");
+                break;
+            case Productlist::UNITPRICE:
+                $qb->addSelect("(p.price/COALESCE(p.weight,1)) AS unitprice");
+                $qb->orderBy("unitprice","ASC");
+                break;
+        }
+
+        if ($productlist->getPagination()) {
             $paginator  = $this->container->get('knp_paginator');
             $result = $paginator->paginate(
                 $qb->getQuery(),
                 $this->container->get('request')->query->get('p', 1)/*page number*/,
-                $perPage
+                $productlist->getPagination()
             );
 
         } else {
             $result = $qb->getQuery()->getResult();
+        }
+
+        if ($productlist->getSort() == Productlist::UNITPRICE) {
+            $result = array_map(function($item) { return $item[0]; }, $result);
         }
 
         return $result;

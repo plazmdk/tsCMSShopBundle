@@ -107,6 +107,12 @@ productlist:
   path: URL
   pagination: Begræns antal produkter per side
 
+  sort:
+    title: Sortering
+    price: Pris
+    alpha: Alfabetisk
+    unitprice: Pris pr vægtenhed
+
   search: Søgekriterier
   singleProducts: Ekstra tilknyttede varer
   categories: Kategorier

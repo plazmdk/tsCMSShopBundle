@@ -12,6 +12,7 @@ namespace tsCMS\ShopBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use tsCMS\ShopBundle\Entity\Productlist;
 
 class ProductlistType extends AbstractType {
 
@@ -46,6 +47,14 @@ class ProductlistType extends AbstractType {
             ->add("pagination","number",array(
                 'label' => 'productlist.pagination',
                 'required' => false
+            ))
+            ->add("sort","choice",array(
+                'label' => 'productlist.sort.title',
+                'choices' => array(
+                    Productlist::PRICE => 'productlist.sort.price',
+                    Productlist::ALPHA => 'productlist.sort.alpha',
+                    Productlist::UNITPRICE => 'productlist.sort.unitprice'
+                )
             ))
             ->add("save","submit",array(
                 'label' => 'productlist.save',

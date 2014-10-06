@@ -22,6 +22,9 @@ use tsCMS\SystemBundle\Interfaces\PathInterface;
  * @tsCMSConstraints\Path()
  */
 class Productlist implements PathInterface {
+    const PRICE = "price";
+    const ALPHA = "alpha";
+    const UNITPRICE = "unitprice";
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -53,6 +56,10 @@ class Productlist implements PathInterface {
      *      )
      */
     protected $categories;
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $sort;
 
     protected $path;
 
@@ -188,5 +195,21 @@ class Productlist implements PathInterface {
     public function getPagination()
     {
         return $this->pagination;
+    }
+
+    /**
+     * @param mixed $sort
+     */
+    public function setSort($sort)
+    {
+        $this->sort = $sort;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSort()
+    {
+        return $this->sort;
     }
 }
