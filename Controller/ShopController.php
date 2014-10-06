@@ -432,12 +432,20 @@ class ShopController extends Controller
             return $this->redirect("/");
         }
 
-        if ($order->getPaymentStatus() == Statuses::PAYMENT_FAILED) {
-            return $this->redirect($this->generateUrl(Config::FAILED_PAYMENT_ROUTE_NAME));
-        }
-
         $basket->newOrder();
 
+        if ($order->getPaymentStatus() == Statuses::PAYMENT_FAILED) {
+            foreach ($order->getLines() as $line) {
+                $basket->addLine($line);
+            }
+            $basket->getOrder()->setCustomerDetails($order->getCustomerDetails());
+            $basket->getOrder()->setShipmentDetails($order->getShipmentDetails());
+            $basket->getOrder()->setPaymentFee($order->getPaymentFee());
+            $basket->getOrder()->setPaymentMethod($order->getPaymentMethod());
+            $basket->save();
+
+            return $this->redirect($this->generateUrl(Config::FAILED_PAYMENT_ROUTE_NAME));
+        }
 
 
         return array(
