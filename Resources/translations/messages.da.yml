@@ -16,6 +16,7 @@ product:
 
   freight: Fragt
   shipmentGroup: Fragtgruppe
+  weight: Vægt
 
   categories: Kategorier
 

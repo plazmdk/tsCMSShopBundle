@@ -67,6 +67,10 @@ class Product implements PathInterface, PriceInterface {
      */
     protected $shipmentGroup;
     /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $weight;
+    /**
      * @ORM\Column(type="boolean")
      */
     protected $disabled = false;
@@ -390,6 +394,22 @@ class Product implements PathInterface, PriceInterface {
     public function getShipmentGroup()
     {
         return $this->shipmentGroup;
+    }
+
+    /**
+     * @param mixed $weight
+     */
+    public function setWeight($weight)
+    {
+        $this->weight = $weight;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWeight()
+    {
+        return $this->weight;
     }
 
     /**

@@ -59,6 +59,10 @@ class ProductType extends AbstractType {
             ->add('shipmentGroup', 'tscms_shop_shipmentgroup',array(
                 'label' => 'product.shipmentGroup'
             ))
+            ->add('weight', 'integer',array(
+                'label' => 'product.weight',
+                'required' => false
+            ))
             ->add('images','tscms_filepicker_multiple',array(
                 'label' => 'product.images',
                 'class' => 'tsCMS\ShopBundle\Entity\Image',
