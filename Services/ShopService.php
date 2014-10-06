@@ -10,6 +10,7 @@ namespace tsCMS\ShopBundle\Services;
 
 
 use Doctrine\ORM\EntityManager;
+use Knp\Component\Pager\Paginator;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
@@ -111,20 +112,26 @@ class ShopService {
         }
 
         if ($productlist->getPagination()) {
+            /** @var Paginator $paginator */
             $paginator  = $this->container->get('knp_paginator');
+
             $result = $paginator->paginate(
                 $qb->getQuery(),
                 $this->container->get('request')->query->get('p', 1)/*page number*/,
                 $productlist->getPagination()
             );
 
+            if ($productlist->getSort() == Productlist::UNITPRICE) {
+                $result->setItems(array_map(function($item) { return $item[0]; }, $result->getItems()));
+            }
         } else {
             $result = $qb->getQuery()->getResult();
+
+            if ($productlist->getSort() == Productlist::UNITPRICE) {
+                $result = array_map(function($item) { return $item[0]; }, $result);
+            }
         }
 
-        if ($productlist->getSort() == Productlist::UNITPRICE) {
-            $result = array_map(function($item) { return $item[0]; }, $result);
-        }
 
         return $result;
     }
