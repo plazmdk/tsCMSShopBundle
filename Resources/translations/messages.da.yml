@@ -55,6 +55,7 @@ config:
 
   shopName: Butiknavn
   shopEmail: Butiksemail
+  newsletter: Nyhedsbrev
 
   urls: Checkout
 

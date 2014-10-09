@@ -67,6 +67,13 @@ class Order implements TotalInterface
     private $note;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="newsletter", type="boolean")
+     */
+    private $newsletter;
+
+    /**
      * @var OrderLine[]
      *
      * @ORM\OneToMany(targetEntity="OrderLine", mappedBy="order", cascade={"persist"})
@@ -280,6 +287,22 @@ class Order implements TotalInterface
     public function getNote()
     {
         return $this->note;
+    }
+
+    /**
+     * @param boolean $newsletter
+     */
+    public function setNewsletter($newsletter)
+    {
+        $this->newsletter = $newsletter;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getNewsletter()
+    {
+        return $this->newsletter;
     }
 
     /**

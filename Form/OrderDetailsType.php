@@ -14,6 +14,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class OrderDetailsType extends AbstractType {
+    /** @var Boolean */
+    private $hasNewsletter;
+
+    function __construct($hasNewsletter)
+    {
+        $this->hasNewsletter = $hasNewsletter;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -31,7 +39,15 @@ class OrderDetailsType extends AbstractType {
                 'attr' => array(
                     'rows' => 5
                 )
-            ))
+            ));
+        if ($this->hasNewsletter) {
+            $builder
+            ->add('newsletter', 'checkbox', array(
+                'label' => 'order.newsletter',
+                'required' => false
+            ));
+        }
+        $builder
             ->add("save","submit",array(
                 'label' => 'order.next',
                 'attr' => array(

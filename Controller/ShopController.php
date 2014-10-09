@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\Test\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use tsCMS\NewsletterBundle\Services\NewsletterService;
 use tsCMS\ShopBundle\Entity\Order;
 use tsCMS\ShopBundle\Entity\OrderLine;
 use tsCMS\ShopBundle\Entity\PaymentTransaction;
@@ -17,7 +18,6 @@ use tsCMS\ShopBundle\Entity\Productlist;
 use tsCMS\ShopBundle\Entity\ProductOrderLine;
 use tsCMS\ShopBundle\Entity\ShipmentMethod;
 use tsCMS\ShopBundle\Entity\ShipmentOrderLine;
-use tsCMS\ShopBundle\Form\BasketType;
 use tsCMS\ShopBundle\Form\OrderDetailsType;
 use tsCMS\ShopBundle\Form\OrderPaymentType;
 use tsCMS\ShopBundle\Form\OrderShipmentType;
@@ -26,7 +26,6 @@ use tsCMS\ShopBundle\Interfaces\PaymentGatewayInterface;
 use tsCMS\ShopBundle\Model\PaymentAuthorize;
 use tsCMS\ShopBundle\Model\Config;
 use tsCMS\ShopBundle\Model\GatewayUrls;
-use tsCMS\ShopBundle\Model\Item;
 use tsCMS\ShopBundle\Model\PaymentResult;
 use tsCMS\ShopBundle\Model\PaymentStatus;
 use tsCMS\ShopBundle\Model\Statuses;
@@ -178,6 +177,8 @@ class ShopController extends Controller
 
         $singlePage = $configService->get(Config::SINGLE_PAGE_CHECKOUT);
 
+        $hasNewsletter = $configService->get(Config::NEWSLETTER) !== null;
+
         if ($singlePage) {
             /** @var ShipmentService $shipmentService */
             $shipmentService = $this->get("tsCMS_shop.shipmentservice");
@@ -193,7 +194,7 @@ class ShopController extends Controller
                     $selectedShipmentMethod = $line->getShipmentMethod();
                 }
             }
-            $form = $this->createForm(new SinglePageCheckoutType($shipmentService, $selectedShipmentMethod, $paymentService, $basket->getOrder()), $basket->getOrder());
+            $form = $this->createForm(new SinglePageCheckoutType($shipmentService, $selectedShipmentMethod, $paymentService, $basket->getOrder(), $hasNewsletter), $basket->getOrder());
             $form->handleRequest($request);
 
             if ($form->isValid()) {
@@ -203,7 +204,7 @@ class ShopController extends Controller
             }
 
         } else {
-            $form = $this->createForm(new OrderDetailsType(), $basket->getOrder());
+            $form = $this->createForm(new OrderDetailsType($hasNewsletter), $basket->getOrder());
             $form->handleRequest($request);
 
             if ($form->isValid()) {
@@ -383,11 +384,11 @@ class ShopController extends Controller
 
             $confirmationTemplateId = $configService->get(Config::CONFIRMATION_TEMPLATE);
             if ($confirmationTemplateId) {
-                /** @var TemplateService $templateService */
-                $templateService = $this->get("tsCMS_template.templateservice");
+                /** @var TemplateService $newsletterService */
+                $newsletterService = $this->get("tsCMS_template.templateservice");
 
-                $template = $templateService->getTemplate($confirmationTemplateId);
-                $mailContent = $templateService->renderTemplate($template, array("order" => $order));
+                $template = $newsletterService->getTemplate($confirmationTemplateId);
+                $mailContent = $newsletterService->renderTemplate($template, array("order" => $order));
 
                 $mail = \Swift_Message::newInstance($template->getTitle(), $mailContent, "text/html");
                 $mail->setTo($order->getCustomerDetails()->getEmail(), $order->getCustomerDetails()->getName());
@@ -399,6 +400,13 @@ class ShopController extends Controller
                 /** @var \Swift_Mailer $mailer */
                 $mailer = $this->get('mailer');
                 $mailer->send($mail);
+            }
+
+            if ($order->getNewsletter() && $configService->get(Config::NEWSLETTER)) {
+                /** @var NewsletterService $newsletterService */
+                $newsletterService = $this->get("tsCMS_newsletter.newsletterservice");
+
+                $newsletterService->addSubscriber($configService->get(Config::NEWSLETTER), $order->getCustomerDetails()->getName(), $order->getCustomerDetails()->getEmail());
             }
         }
 

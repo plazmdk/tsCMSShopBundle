@@ -109,6 +109,12 @@ class ConfigType extends AbstractType {
             ->add("shopEmail","email", array(
                 "label" => "config.shopEmail"
             ))
+            ->add("newsletter","entity", array(
+                "label" => "config.newsletter",
+                "class" => "tsCMSNewsletterBundle:NewsletterList",
+                'property' => 'title',
+                'required' => false
+            ))
             ->add("shipmentRequireMatch","choice", array(
                 "label" => "config.shipmentRequireMatch",
                 "choices" => array(1,0)

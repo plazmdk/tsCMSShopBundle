@@ -106,10 +106,15 @@ class ConfigurationController extends Controller {
         $config->setShopName($configService->get(Config::SHOP_NAME));
         $config->setShopEmail($configService->get(Config::SHOP_EMAIL));
 
+        if ($configService->get(Config::NEWSLETTER)) {
+            $newsletterListRepository = $this->getDoctrine()->getRepository("tsCMSNewsletterBundle:NewsletterList");
+            $config->setNewsletter($newsletterListRepository->find($configService->get(Config::NEWSLETTER)));
+        }
+
         $config->setShipmentRequireMatch($configService->get(Config::SHIPMENT_REQUIRE_MATCH));
         if ($configService->get(Config::SHIPMENT_FALLBACK_METHOD)) {
-            $shipmentRepository = $this->getDoctrine()->getRepository("tsCMSShopBundle:ShipmentMethod");
-            $config->setShipmentFallbackMethod($shipmentRepository->find($configService->get(Config::SHIPMENT_FALLBACK_METHOD)));
+            $newsletterListRepository = $this->getDoctrine()->getRepository("tsCMSShopBundle:ShipmentMethod");
+            $config->setShipmentFallbackMethod($newsletterListRepository->find($configService->get(Config::SHIPMENT_FALLBACK_METHOD)));
         }
 
         /** @var ShipmentService $shipmentService */
@@ -135,6 +140,7 @@ class ConfigurationController extends Controller {
             $configService->set(Config::SEND_INVOICE_TO_ADMIN, $config->getSendInvoiceToAdmin() == 1);
             $configService->set(Config::SHOP_NAME, $config->getShopName());
             $configService->set(Config::SHOP_EMAIL, $config->getShopEmail());
+            $configService->set(Config::NEWSLETTER, $config->getNewsletter() ? $config->getNewsletter()->getId() : null);
             $configService->set(Config::SHIPMENT_REQUIRE_MATCH, $config->getShipmentRequireMatch());
             $configService->set(Config::SHIPMENT_FALLBACK_METHOD, $config->getShipmentFallbackMethod() ? $config->getShipmentFallbackMethod()->getId() : null);
             return $this->redirect($this->generateUrl("tscms_shop_configuration_index"));

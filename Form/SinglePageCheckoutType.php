@@ -26,12 +26,15 @@ class SinglePageCheckoutType extends AbstractType {
     private $paymentService;
     /** @var Order */
     private $order;
+    /** @var Boolean */
+    private $hasNewsletter;
 
-    public function __construct(ShipmentService $shipmentService, $selectedShipmentMethod, PaymentService $paymentService, $order) {
+    public function __construct(ShipmentService $shipmentService, $selectedShipmentMethod, PaymentService $paymentService, $order, $hasNewsletter = false) {
         $this->shipmentService = $shipmentService;
         $this->selectedShipmentMethod = $selectedShipmentMethod;
         $this->paymentService = $paymentService;
         $this->order = $order;
+        $this->hasNewsletter = $hasNewsletter;
     }
 
     /**
@@ -55,7 +58,14 @@ class SinglePageCheckoutType extends AbstractType {
                 'attr' => array(
                     'rows' => 5
                 )
-            ))
+            ));
+        if ($this->hasNewsletter) {
+            $builder->add('newsletter', 'checkbox', array(
+                'label' => 'order.newsletter',
+                'required' => false
+            ));
+        }
+        $builder
             ->add('shipmentMethod', 'extended_entity', array(
                 'label' => 'order.shipmentMethod',
                 'class' => 'tsCMSShopBundle:ShipmentMethod',

@@ -50,8 +50,10 @@ class Config {
 
     const SHOP_NAME = "tsCMS_shop_name";
     const SHOP_EMAIL = "tsCMS_shop_email";
+    const NEWSLETTER = "tsCMS_shop_newsletter";
     private $shopName;
     private $shopEmail;
+    private $newsletter;
 
     const SHIPMENT_REQUIRE_MATCH = "tsCMS_shop_shipmentRequireMatch";
     const SHIPMENT_FALLBACK_METHOD = "tsCMS_shop_shipmentFallbackMethod";
@@ -362,6 +364,22 @@ class Config {
     public function getShipmentRequireMatch()
     {
         return $this->shipmentRequireMatch;
+    }
+
+    /**
+     * @param mixed $newsletter
+     */
+    public function setNewsletter($newsletter)
+    {
+        $this->newsletter = $newsletter;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNewsletter()
+    {
+        return $this->newsletter;
     }
 
 
