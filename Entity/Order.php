@@ -69,7 +69,7 @@ class Order implements TotalInterface
     /**
      * @var boolean
      *
-     * @ORM\Column(name="newsletter", type="boolean")
+     * @ORM\Column(name="newsletter", type="boolean", nullable=true)
      */
     private $newsletter;
 
