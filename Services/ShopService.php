@@ -147,6 +147,7 @@ class ShopService {
         $customerDetails->setEmail("tj@tjb.dk");
         $customerDetails->setPhone("24251545");
         $testOrder = new Order();
+        $testOrder->setId(4177);
         $testOrder->setCustomerDetails($customerDetails);
         $testOrder->setShipmentDetails($customerDetails);
         $testOrder->setDate(new \DateTime());
