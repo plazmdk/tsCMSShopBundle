@@ -95,6 +95,14 @@ class ConfigType extends AbstractType {
                 },
                 'property' => 'title'
             ))
+            ->add("sendConfirmationToAdmin", "checkbox", array(
+                "label" => "config.sendConfirmationToAdmin",
+                "required" => false
+            ))
+            ->add("sendInvoiceToAdmin", "checkbox", array(
+                "label" => "config.sendInvoiceToAdmin",
+                "required" => false
+            ))
             ->add("shopName","text", array(
                 "label" => "config.shopName"
             ))

@@ -391,7 +391,10 @@ class ShopController extends Controller
 
                 $mail = \Swift_Message::newInstance($template->getTitle(), $mailContent, "text/html");
                 $mail->setTo($order->getCustomerDetails()->getEmail(), $order->getCustomerDetails()->getName());
-                $mail->setFrom($configService->get(Config::SHOP_EMAIL),$configService->get(Config::SHOP_NAME));
+                if ($configService->get(Config::SEND_CONFIRMATION_TO_ADMIN) == 1) {
+                    $mail->addBcc($configService->get(Config::SHOP_EMAIL));
+                }
+                $mail->setFrom($configService->get(Config::SHOP_EMAIL), $configService->get(Config::SHOP_NAME));
 
                 /** @var \Swift_Mailer $mailer */
                 $mailer = $this->get('mailer');

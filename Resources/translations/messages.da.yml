@@ -78,6 +78,9 @@ config:
 
   orderConfirmationTemplate: Ordrebekræftelsesmail
   orderInvoiceTemplate: Fakturamail
+  sendConfirmationToAdmin: Send ordrebekræftelse til admin
+  sendInvoiceToAdmin: Send faktura til admin
+
 
   shipment: Fragt
   shipmentRequireMatch: Kræv at fragtmetode passer på alle produkter

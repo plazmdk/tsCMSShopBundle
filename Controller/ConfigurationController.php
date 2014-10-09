@@ -100,6 +100,9 @@ class ConfigurationController extends Controller {
             $config->setOrderInvoiceTemplate($templateRepository->find($invoiceTemplateId));
         }
 
+        $config->setSendConfirmationToAdmin($configService->get(Config::SEND_CONFIRMATION_TO_ADMIN) == 1);
+        $config->setSendInvoiceToAdmin($configService->get(Config::SEND_INVOICE_TO_ADMIN) == 1);
+
         $config->setShopName($configService->get(Config::SHOP_NAME));
         $config->setShopEmail($configService->get(Config::SHOP_EMAIL));
 
@@ -128,6 +131,8 @@ class ConfigurationController extends Controller {
             $configService->set(Config::PRODUCT_URL, $config->getProductUrl());
             $configService->set(Config::CONFIRMATION_TEMPLATE, $config->getOrderConfirmationTemplate()->getId());
             $configService->set(Config::INVOICE_TEMPLATE, $config->getOrderInvoiceTemplate()->getId());
+            $configService->set(Config::SEND_CONFIRMATION_TO_ADMIN, $config->getSendConfirmationToAdmin() == 1);
+            $configService->set(Config::SEND_INVOICE_TO_ADMIN, $config->getSendInvoiceToAdmin() == 1);
             $configService->set(Config::SHOP_NAME, $config->getShopName());
             $configService->set(Config::SHOP_EMAIL, $config->getShopEmail());
             $configService->set(Config::SHIPMENT_REQUIRE_MATCH, $config->getShipmentRequireMatch());

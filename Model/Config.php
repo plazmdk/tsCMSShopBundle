@@ -13,10 +13,10 @@ namespace tsCMS\ShopBundle\Model;
 use tsCMS\TemplateBundle\Entity\Template;
 
 class Config {
+    const SINGLE_PAGE_CHECKOUT = "singlePageCheckout";
+
     const PRODUCT_URL = "tsCMS_shop_productUrl";
     const BASKET_ROUTE_NAME = "basket";
-
-    const SINGLE_PAGE_CHECKOUT = "singlePageCheckout";
     const CHECKOUT_ROUTE_NAME = "checkout";
     const SELECT_SHIPMENT_ROUTE_NAME = "selectShipment";
     const SELECT_PAYMENT_ROUTE_NAME = "selectPayment";
@@ -25,7 +25,6 @@ class Config {
     const FAILED_PAYMENT_ROUTE_NAME = "failedPayment";
     const PAYMENT_CALLBACK_ROUTE_NAME = "paymentCallback";
     const OPEN_CART_ROUTE_NAME = "openCart";
-
 
     private $singlePageCheckout;
 
@@ -42,8 +41,12 @@ class Config {
 
     const CONFIRMATION_TEMPLATE = "tsCMS_shop_confirmationTemplate";
     const INVOICE_TEMPLATE = "tsCMS_shop_invoiceTemplate";
+    const SEND_CONFIRMATION_TO_ADMIN = "tsCMS_shop_sendConfirmationToAdmin";
+    const SEND_INVOICE_TO_ADMIN = "tsCMS_shop_sendInvoiceToAdmin";
     private $orderConfirmationTemplate;
     private $orderInvoiceTemplate;
+    private $sendConfirmationToAdmin;
+    private $sendInvoiceToAdmin;
 
     const SHOP_NAME = "tsCMS_shop_name";
     const SHOP_EMAIL = "tsCMS_shop_email";
@@ -263,6 +266,38 @@ class Config {
     public function getOrderInvoiceTemplate()
     {
         return $this->orderInvoiceTemplate;
+    }
+
+    /**
+     * @param mixed $sendConfirmationToAdmin
+     */
+    public function setSendConfirmationToAdmin($sendConfirmationToAdmin)
+    {
+        $this->sendConfirmationToAdmin = $sendConfirmationToAdmin;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSendConfirmationToAdmin()
+    {
+        return $this->sendConfirmationToAdmin;
+    }
+
+    /**
+     * @param mixed $sendInvoiceToAdmin
+     */
+    public function setSendInvoiceToAdmin($sendInvoiceToAdmin)
+    {
+        $this->sendInvoiceToAdmin = $sendInvoiceToAdmin;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSendInvoiceToAdmin()
+    {
+        return $this->sendInvoiceToAdmin;
     }
 
     /**
