@@ -136,6 +136,7 @@ order:
   shipmentMethod: Leveringsmetode
   paymentMethod: Betalingsmetode
   note: Bemærkninger
+  newsletter: Nyhedsbrev
   status: Status
   paymentStatus: Betalingsstatus
   date: Dato
