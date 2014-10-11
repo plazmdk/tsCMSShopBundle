@@ -144,7 +144,8 @@
                             <thead>
                                 <tr>
                                     <th class="col-lg-1">{{ "basket.amount"|trans }}</th>
-                                    <th class="col-lg-4">{{ "product.title"|trans }}</th>
+                                    <th class="col-lg-1" style="text-align: center;">{{ "basket.fixedPrice"|trans }}</th>
+                                    <th class="col-lg-3">{{ "product.title"|trans }}</th>
                                     <th class="col-lg-3 price">{{ "basket.pricePerUnit"|trans }}</th>
                                     <th class="col-lg-3 price">{{ "basket.price"|trans }}</th>
                                     <th class="col-lg-1" style="text-align: center;">{{ "basket.fixedPrice"|trans }}</th>
@@ -158,19 +159,19 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="5" class="createLineButtons">
+                                    <td colspan="6" class="createLineButtons">
                                         {% for key,prototype in orderForm.lines.vars.prototypes %}
                                             <a href="#" data-line-prototype="{{ form_widget(prototype)|e }}" class="btn btn-warning">{{ ("orderlines." ~ key)|trans }}</a>
                                         {% endfor %}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="3"></td>
+                                    <td colspan="4"></td>
                                     <td class="price total">0</td>
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="3"></td>
+                                    <td colspan="4"></td>
                                     <td class="price total">0</td>
                                     <td></td>
                                 </tr>

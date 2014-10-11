@@ -50,6 +50,13 @@ abstract class OrderLine implements PriceInterface, TotalInterface
     /**
      * @var boolean
      *
+     * @ORM\Column(name="fixedAmount", type="boolean")
+     */
+    private $fixedAmount = false;
+
+    /**
+     * @var boolean
+     *
      * @ORM\Column(name="fixedPrice", type="boolean")
      */
     private $fixedPrice = false;
@@ -165,6 +172,24 @@ abstract class OrderLine implements PriceInterface, TotalInterface
     {
         return $this->fixedPrice;
     }
+
+    /**
+     * @param boolean $fixedAmount
+     */
+    public function setFixedAmount($fixedAmount)
+    {
+        $this->fixedAmount = $fixedAmount;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isFixedAmount()
+    {
+        return $this->fixedAmount;
+    }
+
+
 
     public function sameAs($object) {
         return get_class($this) == get_class($object);

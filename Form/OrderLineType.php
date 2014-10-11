@@ -26,6 +26,10 @@ abstract class OrderLineType extends AbstractType {
         $builder->add('amount','number', array(
             'attr' => array('class' => 'amount')
         ));
+        $builder->add('fixedAmount','checkbox',array(
+            'label' => ' ',
+            'required' => false
+        ));
         $builder->add('price','tscms_shop_price', array(
             'showHelper' => false
         ));

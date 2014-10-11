@@ -1,7 +1,7 @@
 <tr>
     <td class="title">{{ line.title }}</td>
     <td class="amount">
-        {% if noInput is defined or line.isFixedPrice %}
+        {% if noInput is defined or line.isFixedPrice or line.isFixedAmount %}
             {{ line.amount }}
         {% else %}
             <input type="number" min="0" step="1" name="amounts[{{ key }}]" value="{{ line.amount }}"/>
