@@ -33,8 +33,10 @@ class ShopExtension extends \Twig_Extension {
 
     public function getFunctions() {
         return array(
-            new \Twig_SimpleFunction('tscms_shop_pricecalc', array($this, 'priceCalc')),
-            new \Twig_SimpleFunction('tscms_shop_totalcalc', array($this, 'totalCalc'))
+            new \Twig_SimpleFunction('tscms_shop_pricecalc',    array($this, 'priceCalc')),
+            new \Twig_SimpleFunction('tscms_shop_totalcalc',    array($this, 'totalCalc')),
+            new \Twig_SimpleFunction('tscms_shop_vatcalc',      array($this, 'vatCalc')),
+            new \Twig_SimpleFunction('tscms_shop_totalvatcalc', array($this, 'totalVatCalc'))
         );
     }
 
@@ -63,6 +65,22 @@ class ShopExtension extends \Twig_Extension {
             } else {
                 return $item->getTotalVat();
             }
+        }
+        throw new \Exception("Object does not extend TotalInterface");
+    }
+
+    public function vatCalc($item)
+    {
+        if ($item instanceof PriceInterface) {
+            return $item->getPrice() * ($item->getVatGroup()->getPercentage()) / 100;
+        }
+        throw new \Exception("Object does not extend PriceInterface");
+    }
+
+    public function totalVatCalc($item)
+    {
+        if ($item instanceof TotalInterface) {
+            return $item->getTotalVat() - $item->getTotal();
         }
         throw new \Exception("Object does not extend TotalInterface");
     }
