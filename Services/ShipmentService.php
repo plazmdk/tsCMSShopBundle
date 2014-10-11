@@ -101,7 +101,7 @@ class ShipmentService {
         $orderline = new ShipmentOrderLine();
         $orderline->setShipmentMethod($shipmentMethod);
         $orderline->setAmount(1);
-        $orderline->setFixedPrice(true);
+        $orderline->setFixedPrice(false);
         $orderline->setPrice($gateway->calculatePrice($order));
 
         $order->addLine($orderline);
