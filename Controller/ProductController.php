@@ -58,7 +58,7 @@ class ProductController extends Controller {
             $em->persist($product);
             $em->flush();
 
-            $this->saveProductPath($product);
+            $this->saveProductRouteConfig($product);
 
             return $this->redirect($this->generateUrl("tscms_shop_product_edit",array("id" => $product->getId())));
         }
@@ -81,7 +81,7 @@ class ProductController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
 
-            $this->saveProductPath($product);
+            $this->saveProductRouteConfig($product);
 
             return $this->redirect($this->generateUrl("tscms_shop_product_edit",array("id" => $product->getId())));
         }
@@ -136,12 +136,12 @@ class ProductController extends Controller {
         return $this->redirect($this->generateUrl("tscms_shop_product_edit",array("id" => $product->getId())));
     }
 
-    private function saveProductPath(Product $product) {
+    private function saveProductRouteConfig(Product $product) {
         /** @var RouteService $routeService */
         $routeService = $this->get("tsCMS.routeService");
         $name = $routeService->generateNameFromEntity($product);
-        if ($product->getPath()) {
-            $routeService->addRoute($name, $product->getTitle(), $product->getPath(),"tsCMSShopBundle:Shop:product","product",array("id" => $product->getId()),array(),false, true);
+        if ($product->getRouteConfig()->getPath()) {
+            $routeService->addRoute($name, $product->getRouteConfig()->getTitle() ? $product->getRouteConfig()->getTitle() : $product->getTitle(), $product->getRouteConfig()->getPath(),"tsCMSShopBundle:Shop:product","product",array("id" => $product->getId()),array(),false, true, $product->getRouteConfig()->getMetatags(), $product->getRouteConfig()->getMetadescription());
         } else {
             $routeService->removeRoute($name);
         }

@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use tsCMS\ShopBundle\Interfaces\PriceInterface;
+use tsCMS\SystemBundle\Model\RouteConfig;
 use tsCMS\SystemBundle\Validator\Constraints as tsCMSConstraints;
 use tsCMS\SystemBundle\Interfaces\PathInterface;
 
@@ -61,7 +62,7 @@ class Productlist implements PathInterface {
      */
     protected $sort;
 
-    protected $path;
+    protected $routeConfig;
 
     function __construct()
     {
@@ -71,16 +72,19 @@ class Productlist implements PathInterface {
 
 
     /**
-     * @param mixed $path
+     * @param RouteConfig $routeConfig
      */
-    public function setPath($path)
+    public function setRouteConfig($routeConfig)
     {
-        $this->path = $path;
+        $this->routeConfig = $routeConfig;
     }
 
-    public function getPath()
+    /**
+     * @return RouteConfig
+     */
+    public function getRouteConfig()
     {
-        return $this->path;
+        return $this->routeConfig;
     }
 
     /**

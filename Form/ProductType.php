@@ -23,7 +23,7 @@ class ProductType extends AbstractType {
                 'required' => true,
                 "attr" => array("class" => "productTitle")
             ))
-            ->add("path", "route", array(
+            ->add("routeConfig", "route", array(
                 "required" => false,
                 "label"  => "product.path",
                 "attr" => array(

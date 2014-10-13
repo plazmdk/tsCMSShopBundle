@@ -25,7 +25,7 @@ class ProductlistType extends AbstractType {
                 "attr" => array("class" => "productlistTitle")
             ))
             ->add("content", "editor", array("required" => false, "label"  => "productlist.content"))
-            ->add("path", "route", array(
+            ->add("routeConfig", "route", array(
                 "required" => false,
                 "label"  => "productlist.path",
                 "attr" => array(

@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use tsCMS\ShopBundle\Interfaces\PriceInterface;
+use tsCMS\SystemBundle\Model\RouteConfig;
 use tsCMS\SystemBundle\Validator\Constraints as tsCMSConstraints;
 use tsCMS\SystemBundle\Interfaces\PathInterface;
 
@@ -110,7 +111,7 @@ class Product implements PathInterface, PriceInterface {
      */
     protected $categories;
 
-    protected $path;
+    protected $routeConfig;
 
     public function __construct() {
         $this->variants = new ArrayCollection();
@@ -413,16 +414,19 @@ class Product implements PathInterface, PriceInterface {
     }
 
     /**
-     * @param mixed $path
+     * @param RouteConfig $routeConfig
      */
-    public function setPath($path)
+    public function setRouteConfig($routeConfig)
     {
-        $this->path = $path;
+        $this->routeConfig = $routeConfig;
     }
 
-    public function getPath()
+    /**
+     * @return RouteConfig
+     */
+    public function getRouteConfig()
     {
-        return $this->path;
+        return $this->routeConfig;
     }
 
     /**

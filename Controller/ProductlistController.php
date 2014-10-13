@@ -59,7 +59,7 @@ class ProductlistController extends Controller {
             $em->persist($productlist);
             $em->flush();
 
-            $this->saveProductlistPath($productlist);
+            $this->saveProductlistRouteConfig($productlist);
 
             return $this->redirect($this->generateUrl("tscms_shop_productlist_edit",array("id" => $productlist->getId())));
         }
@@ -82,7 +82,7 @@ class ProductlistController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
 
-            $this->saveProductlistPath($productlist);
+            $this->saveProductlistRouteConfig($productlist);
 
             return $this->redirect($this->generateUrl("tscms_shop_productlist_edit",array("id" => $productlist->getId())));
         }
@@ -92,12 +92,12 @@ class ProductlistController extends Controller {
         );
     }
 
-    private function saveProductlistPath(Productlist $productlist) {
+    private function saveProductlistRouteConfig(Productlist $productlist) {
         /** @var RouteService $routeService */
         $routeService = $this->get("tsCMS.routeService");
         $name = $routeService->generateNameFromEntity($productlist);
-        if ($productlist->getPath()) {
-            $routeService->addRoute($name, $productlist->getTitle(), $productlist->getPath(),"tsCMSShopBundle:Shop:productlist","productlist",array("id" => $productlist->getId()),array(),false, true);
+        if ($productlist->getRouteConfig()->getPath()) {
+            $routeService->addRoute($name, $productlist->getRouteConfig()->getTitle() ? $productlist->getRouteConfig()->getTitle() : $productlist->getTitle(), $productlist->getRouteConfig()->getPath(),"tsCMSShopBundle:Shop:productlist","productlist",array("id" => $productlist->getId()),array(),false, true, $productlist->getRouteConfig()->getMetatags(), $productlist->getRouteConfig()->getMetadescription());
         } else {
             $routeService->removeRoute($name);
         }

@@ -318,7 +318,8 @@ class ShopController extends Controller
         $paymentGateway->getAuthorizeForm($formBuilder, $authorize, $order);
 
         $formBuilder->add("_submit", "submit", array(
-            "label" => "order.confirm"
+            "label" => "order.confirm",
+            "attr" => array("class" => "btn-success")
         ));
         $form = $formBuilder->getForm();
 
