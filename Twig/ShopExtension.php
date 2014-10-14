@@ -11,6 +11,8 @@ namespace tsCMS\ShopBundle\Twig;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
+use tsCMS\ShopBundle\Entity\Order;
+use tsCMS\ShopBundle\Entity\ShipmentOrderLine;
 use tsCMS\ShopBundle\Interfaces\PriceInterface;
 use tsCMS\ShopBundle\Interfaces\TotalInterface;
 use tsCMS\ShopBundle\Services\BasketService;
@@ -36,7 +38,8 @@ class ShopExtension extends \Twig_Extension {
             new \Twig_SimpleFunction('tscms_shop_pricecalc',    array($this, 'priceCalc')),
             new \Twig_SimpleFunction('tscms_shop_totalcalc',    array($this, 'totalCalc')),
             new \Twig_SimpleFunction('tscms_shop_vatcalc',      array($this, 'vatCalc')),
-            new \Twig_SimpleFunction('tscms_shop_totalvatcalc', array($this, 'totalVatCalc'))
+            new \Twig_SimpleFunction('tscms_shop_totalvatcalc', array($this, 'totalVatCalc')),
+            new \Twig_SimpleFunction('tscms_shop_totalshipmentcalc', array($this, 'totalShipmentCalc'))
         );
     }
 
@@ -57,10 +60,10 @@ class ShopExtension extends \Twig_Extension {
         throw new \Exception("Object does not extend PriceInterface");
     }
 
-    public function totalCalc($item)
+    public function totalCalc($item,$vat = null)
     {
         if ($item instanceof TotalInterface) {
-            if ($this->session->get("tscms_shop_no_vat", false)) {
+            if ($this->session->get("tscms_shop_no_vat", false) && $vat == null || $vat == false) {
                 return $item->getTotal();
             } else {
                 return $item->getTotalVat();
@@ -83,6 +86,17 @@ class ShopExtension extends \Twig_Extension {
             return $item->getTotalVat() - $item->getTotal();
         }
         throw new \Exception("Object does not extend TotalInterface");
+    }
+
+    public function totalShipmentCalc(Order $order)
+    {
+        $shipment = 0;
+        foreach ($order->getLines() as $line) {
+            if ($line instanceof ShipmentOrderLine) {
+                $shipment += $this->totalCalc($line, true);
+            }
+        }
+        return $shipment;
     }
 
     public function currency($amount)
