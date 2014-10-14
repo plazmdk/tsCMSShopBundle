@@ -52,7 +52,7 @@ function formatPrice(price) {
             var form = $(this).closest("form");
             var productTitle = form.find(".productTitle").val();
 
-            var pagePath = form.find(".productPath");
+            var pagePath = form.find(".route");
             original = pagePath.val() == ("/"+convertTitleToPath(productTitle)).replace(/\/\//g,'/') || pagePath.val() == "";
         })
         .on("change",function() {
@@ -62,7 +62,7 @@ function formatPrice(price) {
             var form = $(this).closest("form");
             var productTitle = form.find(".productTitle").val();
 
-            var productPath = form.find(".productPath");
+            var productPath = form.find(".route");
             productPath.val(("/"+convertTitleToPath(productTitle)).replace(/\/\//g,'/')).change();
         });
 
