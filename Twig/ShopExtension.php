@@ -63,7 +63,7 @@ class ShopExtension extends \Twig_Extension {
     public function totalCalc($item,$vat = null)
     {
         if ($item instanceof TotalInterface) {
-            if ($this->session->get("tscms_shop_no_vat", false) && $vat == null || $vat == false) {
+            if ($this->session->get("tscms_shop_no_vat", false) && $vat === null || $vat === false) {
                 return $item->getTotal();
             } else {
                 return $item->getTotalVat();
