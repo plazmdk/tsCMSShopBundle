@@ -77,10 +77,11 @@ class SinglePageCheckoutType extends AbstractType {
                 'mapped' => false,
                 'data' => $this->selectedShipmentMethod
             ))
-            ->add('paymentMethod', 'entity', array(
+            ->add('paymentMethod', 'extended_entity', array(
                 'label' => 'order.paymentMethod',
                 'class' => 'tsCMSShopBundle:PaymentMethod',
                 'choices' => $this->paymentService->getEnabledPaymentMethods(),
+                'option_details' => array("description" => "description"),
                 'property' => 'title',
                 'expanded' => true,
             ))
