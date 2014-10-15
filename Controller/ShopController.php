@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\Test\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\Translator;
 use tsCMS\NewsletterBundle\Services\NewsletterService;
 use tsCMS\ShopBundle\Entity\Order;
 use tsCMS\ShopBundle\Entity\OrderLine;
@@ -22,6 +23,7 @@ use tsCMS\ShopBundle\Form\OrderDetailsType;
 use tsCMS\ShopBundle\Form\OrderPaymentType;
 use tsCMS\ShopBundle\Form\OrderShipmentType;
 use tsCMS\ShopBundle\Form\SinglePageCheckoutType;
+use tsCMS\ShopBundle\Form\Type\TermsType;
 use tsCMS\ShopBundle\Interfaces\PaymentGatewayInterface;
 use tsCMS\ShopBundle\Model\PaymentAuthorize;
 use tsCMS\ShopBundle\Model\Config;
@@ -317,10 +319,27 @@ class ShopController extends Controller
         $authorize = new PaymentAuthorize($order->getTotalVat(), "DKK", false, $gatewayUrls);
         $paymentGateway->getAuthorizeForm($formBuilder, $authorize, $order);
 
+
+        /** @var ConfigService $configService */
+        $configService = $this->get("tsCMS.configService");
+
+        $termsPageId = $configService->get(Config::TERMS_PAGE);
+        if ($termsPageId) {
+            $routeRepository = $this->getDoctrine()->getRepository("tsCMSSystemBundle:Route");
+            /** @var Route $route */
+            $route = $routeRepository->find($termsPageId);
+            /** @var Translator $translator */
+            $translator = $this->get('translator');
+            $formBuilder->add("terms", "checkbox", array(
+                "label" => $translator->trans("terms.approve",array("%terms%" => "<a class='popup' href='".$route->getPath()."'>".$translator->trans("terms.name")."</a>"))
+            ));
+        }
+
         $formBuilder->add("_submit", "submit", array(
             "label" => "order.confirm",
             "attr" => array("class" => "btn-success")
         ));
+
         $form = $formBuilder->getForm();
 
         return array(

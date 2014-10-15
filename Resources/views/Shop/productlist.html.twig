@@ -6,7 +6,7 @@
     <h1>{{ productlist.title }}</h1>
     {{ productlist.content }}
     {% for product in products %}
-        <b><a href="{{ product.path }}">{{ product.title }}</a></b>
+        <b><a href="{{ product.routeConfig.path }}">{{ product.title }}</a></b>
         <br/>
     {% endfor %}
     {% if products.count is defined %}

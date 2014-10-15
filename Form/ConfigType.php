@@ -39,29 +39,26 @@ class ConfigType extends AbstractType {
             ->add("productUrl","text", array(
                 "label" => "config.productUrl",
             ))
-            ->add("basketUrl","text", array(
+            ->add("basketUrl","route", array(
                 "label" => "config.basketUrl",
             ))
-            ->add("checkoutUrl","text", array(
+            ->add("checkoutUrl","route", array(
                 "label" => "config.checkoutUrl",
             ))
-            ->add("selectShipmentUrl","text", array(
+            ->add("selectShipmentUrl","route", array(
                 "label" => "config.selectShipmentUrl",
             ))
-            ->add("selectPaymentUrl","text", array(
+            ->add("selectPaymentUrl","route", array(
                 "label" => "config.selectPaymentUrl",
             ))
-            ->add("confirmOrderUrl","text", array(
+            ->add("confirmOrderUrl","route", array(
                 "label" => "config.confirmOrderUrl",
             ))
-            ->add("approvedPaymentUrl","text", array(
+            ->add("approvedPaymentUrl","route", array(
                 "label" => "config.approvedPaymentUrl",
             ))
-            ->add("failedPaymentUrl","text", array(
+            ->add("failedPaymentUrl","route", array(
                 "label" => "config.failedPaymentUrl",
-            ))
-            ->add("paymentCallbackUrl","text", array(
-                "label" => "config.paymentCallbackUrl",
             ))
             ->add("paymentCallbackUrl","text", array(
                 "label" => "config.paymentCallbackUrl",
@@ -112,6 +109,19 @@ class ConfigType extends AbstractType {
             ->add("newsletter","entity", array(
                 "label" => "config.newsletter",
                 "class" => "tsCMSNewsletterBundle:NewsletterList",
+                'property' => 'title',
+                'required' => false
+            ))
+            ->add("termsPage","entity", array(
+                "label" => "config.terms",
+                "class" => "tsCMSSystemBundle:Route",
+                'query_builder' => function(EntityRepository $er)
+                    {
+                        $qb = $er->createQueryBuilder('r');
+                        $qb->where("r.bundle != 'product' AND r.bundle != 'shop'");
+
+                        return $qb;
+                    },
                 'property' => 'title',
                 'required' => false
             ))

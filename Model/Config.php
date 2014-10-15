@@ -10,6 +10,9 @@ namespace tsCMS\ShopBundle\Model;
 
 
 
+use tsCMS\PageBundle\Entity\Page;
+use tsCMS\SystemBundle\Entity\Route;
+use tsCMS\SystemBundle\Model\RouteConfig;
 use tsCMS\TemplateBundle\Entity\Template;
 
 class Config {
@@ -51,9 +54,11 @@ class Config {
     const SHOP_NAME = "tsCMS_shop_name";
     const SHOP_EMAIL = "tsCMS_shop_email";
     const NEWSLETTER = "tsCMS_shop_newsletter";
+    const TERMS_PAGE = "tsCMS_shop_terms_page";
     private $shopName;
     private $shopEmail;
     private $newsletter;
+    private $termsPage;
 
     const SHIPMENT_REQUIRE_MATCH = "tsCMS_shop_shipmentRequireMatch";
     const SHIPMENT_FALLBACK_METHOD = "tsCMS_shop_shipmentFallbackMethod";
@@ -85,7 +90,7 @@ class Config {
     }
 
     /**
-     * @return mixed
+     * @return RouteConfig
      */
     public function getBasketUrl()
     {
@@ -101,7 +106,7 @@ class Config {
     }
 
     /**
-     * @return mixed
+     * @return RouteConfig
      */
     public function getCheckoutUrl()
     {
@@ -117,7 +122,7 @@ class Config {
     }
 
     /**
-     * @return mixed
+     * @return RouteConfig
      */
     public function getProductUrl()
     {
@@ -133,7 +138,7 @@ class Config {
     }
 
     /**
-     * @return mixed
+     * @return RouteConfig
      */
     public function getApprovedPaymentUrl()
     {
@@ -149,7 +154,7 @@ class Config {
     }
 
     /**
-     * @return mixed
+     * @return RouteConfig
      */
     public function getConfirmOrderUrl()
     {
@@ -165,7 +170,7 @@ class Config {
     }
 
     /**
-     * @return mixed
+     * @return RouteConfig
      */
     public function getFailedPaymentUrl()
     {
@@ -181,14 +186,12 @@ class Config {
     }
 
     /**
-     * @return mixed
+     * @return RouteConfig
      */
     public function getSelectShipmentUrl()
     {
         return $this->selectShipmentUrl;
     }
-
-
 
     /**
      * @param mixed $selectPaymentUrl
@@ -199,7 +202,7 @@ class Config {
     }
 
     /**
-     * @return mixed
+     * @return RouteConfig
      */
     public function getSelectPaymentUrl()
     {
@@ -215,7 +218,7 @@ class Config {
     }
 
     /**
-     * @return mixed
+     * @return RouteConfig
      */
     public function getPaymentCallbackUrl()
     {
@@ -332,6 +335,22 @@ class Config {
     public function getShopName()
     {
         return $this->shopName;
+    }
+
+    /**
+     * @param mixed $term
+     */
+    public function setTermsPage($term)
+    {
+        $this->termsPage = $term;
+    }
+
+    /**
+     * @return Route
+     */
+    public function getTermsPage()
+    {
+        return $this->termsPage;
     }
 
     /**

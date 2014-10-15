@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use tsCMS\ShopBundle\Form\ConfigType;
 use tsCMS\ShopBundle\Model\Config;
 use tsCMS\ShopBundle\Services\ShipmentService;
+use tsCMS\SystemBundle\Model\RouteConfig;
 use tsCMS\SystemBundle\Services\ConfigService;
 use tsCMS\SystemBundle\Services\RouteService;
 
@@ -41,39 +42,39 @@ class ConfigurationController extends Controller {
 
         $basketRoute = $routeService->getRouteByName(Config::BASKET_ROUTE_NAME);
         if ($basketRoute) {
-            $config->setBasketUrl($basketRoute->getPath());
+            $config->setBasketUrl(RouteConfig::fromRoute($basketRoute));
         }
 
         $config->setSinglePageCheckout($configService->get(Config::SINGLE_PAGE_CHECKOUT));
 
         $checkoutRoute = $routeService->getRouteByName(Config::CHECKOUT_ROUTE_NAME);
         if ($checkoutRoute) {
-            $config->setCheckoutUrl($checkoutRoute->getPath());
+            $config->setCheckoutUrl(RouteConfig::fromRoute($checkoutRoute));
         }
 
         $selectShipmentRoute = $routeService->getRouteByName(Config::SELECT_SHIPMENT_ROUTE_NAME);
         if ($selectShipmentRoute) {
-            $config->setSelectShipmentUrl($selectShipmentRoute->getPath());
+            $config->setSelectShipmentUrl(RouteConfig::fromRoute($selectShipmentRoute));
         }
 
         $selectPaymentRoute = $routeService->getRouteByName(Config::SELECT_PAYMENT_ROUTE_NAME);
         if ($selectPaymentRoute) {
-            $config->setSelectPaymentUrl($selectPaymentRoute->getPath());
+            $config->setSelectPaymentUrl(RouteConfig::fromRoute($selectPaymentRoute));
         }
 
         $confirmOrderRoute = $routeService->getRouteByName(Config::CONFIRM_ORDER_ROUTE_NAME);
         if ($confirmOrderRoute) {
-            $config->setConfirmOrderUrl($confirmOrderRoute->getPath());
+            $config->setConfirmOrderUrl(RouteConfig::fromRoute($confirmOrderRoute));
         }
 
         $approvePaymentRoute = $routeService->getRouteByName(Config::APPROVED_PAYMENT_ROUTE_NAME);
         if ($approvePaymentRoute) {
-            $config->setApprovedPaymentUrl($approvePaymentRoute->getPath());
+            $config->setApprovedPaymentUrl(RouteConfig::fromRoute($approvePaymentRoute));
         }
 
         $failedPaymentRoute = $routeService->getRouteByName(Config::FAILED_PAYMENT_ROUTE_NAME);
         if ($failedPaymentRoute) {
-            $config->setFailedPaymentUrl($failedPaymentRoute->getPath());
+            $config->setFailedPaymentUrl(RouteConfig::fromRoute($failedPaymentRoute));
         }
 
         $paymentCallbackRoute = $routeService->getRouteByName(Config::PAYMENT_CALLBACK_ROUTE_NAME);
@@ -111,6 +112,13 @@ class ConfigurationController extends Controller {
             $config->setNewsletter($newsletterListRepository->find($configService->get(Config::NEWSLETTER)));
         }
 
+
+        $termsPageId = $configService->get(Config::TERMS_PAGE);
+        if ($termsPageId) {
+            $routeRepository = $this->getDoctrine()->getRepository("tsCMSSystemBundle:Route");
+            $config->setTermsPage($routeRepository->find($termsPageId));
+        }
+
         $config->setShipmentRequireMatch($configService->get(Config::SHIPMENT_REQUIRE_MATCH));
         if ($configService->get(Config::SHIPMENT_FALLBACK_METHOD)) {
             $newsletterListRepository = $this->getDoctrine()->getRepository("tsCMSShopBundle:ShipmentMethod");
@@ -124,13 +132,13 @@ class ConfigurationController extends Controller {
         $form->handleRequest($request);
         if ($form->isValid()) {
             $configService->set(Config::SINGLE_PAGE_CHECKOUT, $config->getSinglePageCheckout());
-            $routeService->addRoute(Config::BASKET_ROUTE_NAME, "basket", $config->getBasketUrl(), "tsCMSShopBundle:Shop:basket", "shop",array(),array(),false,true);
-            $routeService->addRoute(Config::CHECKOUT_ROUTE_NAME, "checkout", $config->getCheckoutUrl(), "tsCMSShopBundle:Shop:checkout", "shop",array(),array(),false,true);
-            $routeService->addRoute(Config::SELECT_SHIPMENT_ROUTE_NAME, "selectPayment", $config->getSelectShipmentUrl(), "tsCMSShopBundle:Shop:selectShipment", "shop",array(),array(),false,true);
-            $routeService->addRoute(Config::SELECT_PAYMENT_ROUTE_NAME, "selectPayment", $config->getSelectPaymentUrl(), "tsCMSShopBundle:Shop:selectPayment", "shop",array(),array(),false,true);
-            $routeService->addRoute(Config::CONFIRM_ORDER_ROUTE_NAME, "confirmOrder", $config->getConfirmOrderUrl(), "tsCMSShopBundle:Shop:confirmOrder", "shop",array(),array(),false,true);
-            $routeService->addRoute(Config::APPROVED_PAYMENT_ROUTE_NAME, "approvedPayment", $config->getApprovedPaymentUrl(), "tsCMSShopBundle:Shop:paymentApproved", "shop",array(),array(),false,true);
-            $routeService->addRoute(Config::FAILED_PAYMENT_ROUTE_NAME, "failedPayment", $config->getFailedPaymentUrl(), "tsCMSShopBundle:Shop:paymentFailed", "shop",array(),array(),false,true);
+            $routeService->addRoute(Config::BASKET_ROUTE_NAME, $config->getBasketUrl()->getTitle(), $config->getBasketUrl()->getPath(), "tsCMSShopBundle:Shop:basket", "shop",array(),array(),false,true);
+            $routeService->addRoute(Config::CHECKOUT_ROUTE_NAME, $config->getCheckoutUrl()->getTitle(), $config->getCheckoutUrl()->getPath(), "tsCMSShopBundle:Shop:checkout", "shop",array(),array(),false,true);
+            $routeService->addRoute(Config::SELECT_SHIPMENT_ROUTE_NAME, $config->getSelectShipmentUrl()->getTitle(), $config->getSelectShipmentUrl()->getPath(), "tsCMSShopBundle:Shop:selectShipment", "shop",array(),array(),false,true);
+            $routeService->addRoute(Config::SELECT_PAYMENT_ROUTE_NAME, $config->getSelectPaymentUrl()->getTitle(), $config->getSelectPaymentUrl()->getPath(), "tsCMSShopBundle:Shop:selectPayment", "shop",array(),array(),false,true);
+            $routeService->addRoute(Config::CONFIRM_ORDER_ROUTE_NAME, $config->getConfirmOrderUrl()->getTitle(), $config->getConfirmOrderUrl()->getPath(), "tsCMSShopBundle:Shop:confirmOrder", "shop",array(),array(),false,true);
+            $routeService->addRoute(Config::APPROVED_PAYMENT_ROUTE_NAME, $config->getApprovedPaymentUrl()->getTitle(), $config->getApprovedPaymentUrl()->getPath(), "tsCMSShopBundle:Shop:paymentApproved", "shop",array(),array(),false,true);
+            $routeService->addRoute(Config::FAILED_PAYMENT_ROUTE_NAME, $config->getFailedPaymentUrl()->getTitle(), $config->getFailedPaymentUrl()->getPath(), "tsCMSShopBundle:Shop:paymentFailed", "shop",array(),array(),false,true);
             $routeService->addRoute(Config::PAYMENT_CALLBACK_ROUTE_NAME, "paymentCallback", $config->getPaymentCallbackUrl(), "tsCMSShopBundle:Shop:callback", "shop",array(),array(),false,true);
             $routeService->addRoute(Config::OPEN_CART_ROUTE_NAME, "openCart", $config->getOpenCartUrl(), "tsCMSShopBundle:Shop:openCart", "shop",array(),array(),true,true);
             $configService->set(Config::PRODUCT_URL, $config->getProductUrl());
@@ -141,6 +149,7 @@ class ConfigurationController extends Controller {
             $configService->set(Config::SHOP_NAME, $config->getShopName());
             $configService->set(Config::SHOP_EMAIL, $config->getShopEmail());
             $configService->set(Config::NEWSLETTER, $config->getNewsletter() ? $config->getNewsletter()->getId() : null);
+            $configService->set(Config::TERMS_PAGE, $config->getTermsPage() ? $config->getTermsPage()->getName() : null);
             $configService->set(Config::SHIPMENT_REQUIRE_MATCH, $config->getShipmentRequireMatch());
             $configService->set(Config::SHIPMENT_FALLBACK_METHOD, $config->getShipmentFallbackMethod() ? $config->getShipmentFallbackMethod()->getId() : null);
             return $this->redirect($this->generateUrl("tscms_shop_configuration_index"));

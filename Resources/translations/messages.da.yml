@@ -56,6 +56,7 @@ config:
   shopName: Butiknavn
   shopEmail: Butiksemail
   newsletter: Nyhedsbrev
+  terms: Handelsbetingelser
 
   urls: Checkout
 
@@ -258,3 +259,7 @@ price:
 orderlines:
   tscms_shop_productorderline: Ny produktlinie
   tscms_shop_shipmentorderline: Ny fragtlinie
+
+terms:
+  name: Handelsbetingelser
+  approve: Du skal acceptere vores %terms%.
