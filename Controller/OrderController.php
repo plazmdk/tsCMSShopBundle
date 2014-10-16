@@ -44,7 +44,6 @@ class OrderController extends Controller {
         /** @var QueryBuilder $orderQueryBuilder */
         $orderQueryBuilder = $this->getDoctrine()->getRepository("tsCMSShopBundle:Order")->createQueryBuilder("o");
         $orderQueryBuilder->orderBy("o.date");
-        $orderQueryBuilder->where("o.cart = 0");
 
         $orderFilterForm = $this->createForm(new OrderFilterType());
         $orderFilterForm->handleRequest($request);
@@ -56,6 +55,8 @@ class OrderController extends Controller {
         } else {
             $orderQueryBuilder->andWhere("o.status = :status")->setParameter("status", Statuses::ORDER_RECEIVED);
         }
+
+        $orderQueryBuilder->andWhere("o.cart = 0");
 
         /** @var Order[] $orders */
         $orders = $orderQueryBuilder->getQuery()->getResult();
