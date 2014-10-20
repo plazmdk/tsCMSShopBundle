@@ -33,8 +33,8 @@ class OrderFilterType extends AbstractType {
         ));
         $builder->add('date', 'filter_date_range', array(
             'label' => 'order.date',
-            'right_date_options' => array('widget' => 'single_text'),
-            'left_date_options' => array('widget' => 'single_text')
+            'left_date_options' => array('widget' => 'single_text', 'label' => 'order.dateFrom'),
+            'right_date_options' => array('widget' => 'single_text', 'label' => 'order.dateTo')
         ));
         $builder->add('save', 'submit', array(
             'label' => 'order.filter'

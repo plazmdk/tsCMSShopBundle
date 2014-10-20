@@ -141,6 +141,8 @@ order:
   status: Status
   paymentStatus: Betalingsstatus
   date: Dato
+  dateFrom: Fra
+  dateTo: Til
   total: Total
 
   save: Gem

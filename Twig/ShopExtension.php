@@ -48,10 +48,10 @@ class ShopExtension extends \Twig_Extension {
         return 'shop_extension';
     }
 
-    public function priceCalc($item)
+    public function priceCalc($item,$vat = null)
     {
         if ($item instanceof PriceInterface) {
-            if ($this->session->get("tscms_shop_no_vat", false)) {
+            if ($this->session->get("tscms_shop_no_vat", false) && $vat === null || $vat === false) {
                 return $item->getPrice();
             } else {
                 return $item->getPrice() * (100 + $item->getVatGroup()->getPercentage()) / 100;
