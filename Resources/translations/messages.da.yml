@@ -167,6 +167,7 @@ customerDetails:
   country: Land
   email: E-mail
   phone: Telefon
+  phone: Mobil
 
 categories: Kategorier
 category:

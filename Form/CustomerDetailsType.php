@@ -64,6 +64,10 @@ class CustomerDetailsType extends AbstractType
                 'label' => 'customerDetails.phone',
                 'required' => true
             ));
+            $builder->add('mobile','text', array(
+                'label' => 'customerDetails.mobile',
+                'required' => true
+            ));
         }
     }
 

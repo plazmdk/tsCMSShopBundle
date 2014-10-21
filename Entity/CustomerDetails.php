@@ -77,6 +77,13 @@ class CustomerDetails
      */
     private $phone;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="mobile", type="string", length=255)
+     */
+    private $mobile;
+
 
 
     /**
@@ -271,4 +278,22 @@ class CustomerDetails
     {
         return $this->phone;
     }
+
+    /**
+     * @param string $mobile
+     */
+    public function setMobile($mobile)
+    {
+        $this->mobile = $mobile;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMobile()
+    {
+        return $this->mobile;
+    }
+
+
 }
