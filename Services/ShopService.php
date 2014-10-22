@@ -81,22 +81,26 @@ class ShopService {
         $qb->leftJoin("p.images","i");
         $qb->leftJoin("p.categories","c");
         $qb->select("p, i");
+        $qb->where("p.disabled = 0");
 
+        $clauses = $qb->expr()->orX();
 
         if (count($productlist->getSingleProducts()) > 0) {
             $specificProducts = array();
             foreach ($productlist->getSingleProducts() as $specificProduct) {
                 $specificProducts[] = $specificProduct->getProduct();
             }
-            $qb->where("p IN (:specificProducts)");
+            $clauses->add("p IN (:specificProducts)");
             $qb->setParameter("specificProducts",$specificProducts);
 
         }
 
         if (count($productlist->getCategories()) > 0) {
-            $qb->orWhere("c IN (:categories)");
+            $clauses->add("c IN (:categories)");
             $qb->setParameter(":categories", $productlist->getCategories()->getValues());
         }
+
+        $qb->andWhere($clauses);
 
         switch ($productlist->getSort()) {
             case Productlist::PRICE:
