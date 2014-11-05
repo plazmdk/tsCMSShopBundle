@@ -62,7 +62,7 @@ class CustomerDetailsType extends AbstractType
             ));
             $builder->add('phone','text', array(
                 'label' => 'customerDetails.phone',
-                'required' => false
+                'required' => true
             ));
             $builder->add('mobile','text', array(
                 'label' => 'customerDetails.mobile',
