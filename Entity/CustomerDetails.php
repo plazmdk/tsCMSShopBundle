@@ -73,14 +73,14 @@ class CustomerDetails
     /**
      * @var string
      *
-     * @ORM\Column(name="phone", type="string", length=255)
+     * @ORM\Column(name="phone", type="string", length=255, nullable=true)
      */
     private $phone;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="mobile", type="string", length=255)
+     * @ORM\Column(name="mobile", type="string", length=255, nullable=true)
      */
     private $mobile;
 
