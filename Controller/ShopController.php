@@ -410,7 +410,8 @@ class ShopController extends Controller
                 $template = $newsletterService->getTemplate($confirmationTemplateId);
                 $mailContent = $newsletterService->renderTemplate($template, array("order" => $order));
 
-                $mail = \Swift_Message::newInstance($template->getTitle(), $mailContent, "text/html");
+                $title = str_replace("order.id",$order->getId(), $template->getTitle());
+                $mail = \Swift_Message::newInstance($title, $mailContent, "text/html");
                 $mail->setTo($order->getCustomerDetails()->getEmail(), $order->getCustomerDetails()->getName());
                 if ($configService->get(Config::SEND_CONFIRMATION_TO_ADMIN) == 1) {
                     $mail->addBcc($configService->get(Config::SHOP_EMAIL));
