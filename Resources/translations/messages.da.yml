@@ -266,3 +266,7 @@ orderlines:
 terms:
   name: Handelsbetingelser
   approve: Du skal acceptere vores %terms%.
+
+sendemail:
+  email: Email
+  send: Send

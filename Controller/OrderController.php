@@ -24,10 +24,14 @@ use tsCMS\ShopBundle\Form\OrderCustomerDetailsType;
 use tsCMS\ShopBundle\Form\OrderFilterType;
 use tsCMS\ShopBundle\Form\OrderLinesType;
 use tsCMS\ShopBundle\Form\OrderStatusType;
+use tsCMS\ShopBundle\Form\SendEmailType;
+use tsCMS\ShopBundle\Model\Config;
 use tsCMS\ShopBundle\Model\PaymentCapture;
 use tsCMS\ShopBundle\Model\PaymentResult;
 use tsCMS\ShopBundle\Model\Statuses;
 use tsCMS\ShopBundle\Services\PaymentService;
+use tsCMS\SystemBundle\Services\ConfigService;
+use tsCMS\TemplateBundle\Services\TemplateService;
 
 /**
  * @Route("/shop/order")
@@ -173,12 +177,16 @@ class OrderController extends Controller {
             return $this->redirect($this->generateUrl("tscms_shop_order_edit", array("id" => $order->getId())));
         }
 
+        $sendEmailForm = $this->createForm(new SendEmailType($this->generateUrl("tscms_shop_order_sendconfirmationmail", array("id" => $order->getId()))));
+
+
         return array(
             "orderStatusForm" => $orderStatusForm->createView(),
             "captureForm" => $captureForm->createView(),
             "orderCustomerDetailsForm" => $orderCustomerDetailsForm->createView(),
             "orderLinesForm" => $orderLinesForm->createView(),
-            "order" => $order
+            "order" => $order,
+            "sendConfirmationForm" => $sendEmailForm->createView()
         );
     }
 
@@ -228,5 +236,37 @@ class OrderController extends Controller {
             ));
         }
         return $captureForm->getForm();
+    }
+
+    /**
+     * @Route("/{id}/sendConfirmationMail")
+     * @Secure("ROLE_ADMIN")
+     */
+    public function sendConfirmationMailAction(Order $order, Request $request) {
+        $sendEmailForm = $this->createForm(new SendEmailType(""));
+        $sendEmailForm->handleRequest($request);
+        if ($sendEmailForm->isValid()) {
+            /** @var ConfigService $configService */
+            $configService = $this->get("tsCMS.configService");
+
+            $confirmationTemplateId = $configService->get(Config::CONFIRMATION_TEMPLATE);
+            if ($confirmationTemplateId) {
+                /** @var TemplateService $newsletterService */
+                $newsletterService = $this->get("tsCMS_template.templateservice");
+
+                $template = $newsletterService->getTemplate($confirmationTemplateId);
+                $mailContent = $newsletterService->renderTemplate($template, array("order" => $order));
+
+                $title = str_replace("order.id", $order->getId(), $template->getTitle());
+                $mail = \Swift_Message::newInstance($title, $mailContent, "text/html");
+                $mail->setTo($sendEmailForm['email']->getData(), $order->getCustomerDetails()->getName());
+                $mail->setFrom($configService->get(Config::SHOP_EMAIL), $configService->get(Config::SHOP_NAME));
+
+                /** @var \Swift_Mailer $mailer */
+                $mailer = $this->get('mailer');
+                $mailer->send($mail);
+            }
+        }
+        return $this->redirect($this->generateUrl("tscms_shop_order_edit", array("id" => $order->getId())));
     }
 }

@@ -38,6 +38,11 @@
                         <div class="col-lg-3">
                             {{ form(captureForm) }}
                         </div>
+                        <div class="col-lg-3">
+                            {% if sendConfirmationForm is defined %}
+                                {{ form(sendConfirmationForm) }}
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
