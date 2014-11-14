@@ -43,6 +43,8 @@ class OrderController extends Controller {
     {
         /** @var QueryBuilder $orderQueryBuilder */
         $orderQueryBuilder = $this->getDoctrine()->getRepository("tsCMSShopBundle:Order")->createQueryBuilder("o");
+        $orderQueryBuilder->leftJoin("o.lines","ol");
+        $orderQueryBuilder->addSelect("ol");
         $orderQueryBuilder->orderBy("o.date");
 
         $orderFilterForm = $this->createForm(new OrderFilterType());

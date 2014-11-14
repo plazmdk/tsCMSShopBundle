@@ -32,13 +32,14 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th></th>
-                    <th>{{ "order.id"|trans }}</th>
-                    <th>{{ "customerDetails.name"|trans }}</th>
-                    <th>{{ "order.status"|trans }}</th>
-                    <th>{{ "order.paymentStatus"|trans }}</th>
-                    <th>{{ "order.date"|trans }}</th>
-                    <th>{{ "order.total"|trans }}</th>
+                    <th style="width: 5%;"></th>
+                    <th style="width: 5%;">{{ "order.id"|trans }}</th>
+                    <th style="width: 15%;">{{ "customerDetails.name"|trans }}</th>
+                    <th style="width: 10%;">{{ "order.status"|trans }}</th>
+                    <th style="width: 10%;">{{ "order.paymentStatus"|trans }}</th>
+                    <th style="width: 10%;">{{ "order.date"|trans }}</th>
+                    <th style="width: 10%;">{{ "order.total"|trans }}</th>
+                    <th style="width: 5%;"></th>
                     <th></th>
                 </tr>
             </thead>
@@ -70,6 +71,21 @@
                             <a href="{{ path("tscms_shop_order_edit", { id: order.id }) }}">
                                 <i class="fa fa-edit"></i>
                             </a>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr class="table-snug">
+                        <td></td>
+                        <td colspan="8">
+                            <table class="table-condensed">
+                                {% for line in order.lines %}
+                                    <tr>
+                                        <td>{{ line.amount }}</td>
+                                        <td>{{ line.title }}</td>
+                                        <td>{{ tscms_shop_totalcalc(line)|currency }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
                         </td>
                     </tr>
                 {% endfor %}
