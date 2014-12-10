@@ -228,11 +228,11 @@ class OrderController extends Controller {
         $captureForm->setAction($this->generateUrl("tscms_shop_order_captureorder", array("id" => $order->getId())));
         if ($captureAmount === null || $captureAmount > 0) {
             $captureForm->add("amount", "money", array(
-                "label" => "captureAmount",
+                "label" => "capture.amount",
                 "currency" => "DKK"
             ));
             $captureForm->add("capture", "submit", array(
-                "label" => "capture"
+                "label" => "capture.perform"
             ));
         }
         return $captureForm->getForm();

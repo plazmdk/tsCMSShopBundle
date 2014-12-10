@@ -270,3 +270,7 @@ terms:
 sendemail:
   email: Email
   send: Send
+
+capture:
+  amount: Beløb at hæve
+  perform: Hæv
