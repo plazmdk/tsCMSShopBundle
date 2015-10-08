@@ -93,16 +93,23 @@ class OrderController extends Controller {
                 }
 
                 foreach ($order->getLines() as $lineno => $line) {
-                    $sheet->setCellValueByColumnAndRow(7 + ($lineno * 2), $rowNo, $line->getAmount());
-                    $sheet->setCellValueByColumnAndRow(7 + ($lineno * 2) + 1, $rowNo, $line->getTitle());
+                    $sheet->setCellValueByColumnAndRow(7 + ($lineno * 3), $rowNo, $line->getAmount());
+                    if ($line instanceof ProductOrderLine) {
+                        $sheet->setCellValueByColumnAndRow(7 + ($lineno * 3) + 1, $rowNo, $line->getProduct()->getPartnumber());
+                    } else {
+                        $sheet->setCellValueByColumnAndRow(7 + ($lineno * 3) + 1, $rowNo, "-");
+                    }
+
+                    $sheet->setCellValueByColumnAndRow(7 + ($lineno * 3) + 2, $rowNo, $line->getTitle());
                     if ($lineno > $maxProductCount) {
                         $maxProductCount = $lineno;
                     }
                 }
             }
             for($a = 0; $a <= $maxProductCount; $a++) {
-                $sheet->getColumnDimensionByColumn(7 + ($a * 2))->setAutoSize(true);
-                $sheet->getColumnDimensionByColumn(7 + ($a * 2) + 1)->setAutoSize(true);
+                $sheet->getColumnDimensionByColumn(7 + ($a * 3))->setAutoSize(true);
+                $sheet->getColumnDimensionByColumn(7 + ($a * 3) + 1)->setAutoSize(true);
+                $sheet->getColumnDimensionByColumn(7 + ($a * 3) + 2)->setAutoSize(true);
             }
             $sheet->calculateColumnWidths();
 
