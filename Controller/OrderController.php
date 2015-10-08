@@ -11,11 +11,15 @@ namespace tsCMS\ShopBundle\Controller;
 use Doctrine\ORM\QueryBuilder;
 use Lexik\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
 use Lexik\Bundle\FormFilterBundle\Tests\Filter\Doctrine\DoctrineQueryBuilderUpdater;
+use PHPExcel_IOFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use tsCMS\ShopBundle\Entity\Order;
 use tsCMS\ShopBundle\Entity\ProductOrderLine;
 use tsCMS\ShopBundle\Entity\ShipmentOrderLine;
@@ -66,6 +70,61 @@ class OrderController extends Controller {
 
         /** @var Order[] $orders */
         $orders = $orderQueryBuilder->getQuery()->getResult();
+
+        if ($request->isMethod("GET") && $request->query->has("export")) {
+            $phpExcel = new \PHPExcel();
+            $sheet = $phpExcel->getActiveSheet();
+            $maxProductCount = 0;
+            foreach (["Ordrenr", "Navn", "Adresse","Postnr + by","Telefon","Leveringsadresse","Leverings postnr + by"] as $index => $column) {
+                $sheet->setCellValueByColumnAndRow($index, 1, $column);
+                $sheet->getColumnDimensionByColumn($index)->setAutoSize(true);
+            }
+            foreach ($orders as $rowIndex => $order) {
+                $rowNo = $rowIndex + 2;
+
+                $sheet->setCellValueByColumnAndRow(0, $rowNo, $order->getId());
+                $sheet->setCellValueByColumnAndRow(1, $rowNo, $order->getCustomerDetails()->getName());
+                $sheet->setCellValueByColumnAndRow(2, $rowNo, $order->getCustomerDetails()->getAddress() . " ".$order->getCustomerDetails()->getAddress2());
+                $sheet->setCellValueByColumnAndRow(3, $rowNo, $order->getCustomerDetails()->getPostalcode() . " ".$order->getCustomerDetails()->getCity());
+                $sheet->setCellValueByColumnAndRow(4, $rowNo, $order->getCustomerDetails()->getPhone());
+                if ($order->getShipmentDetails()) {
+                    $sheet->setCellValueByColumnAndRow(5, $rowNo, $order->getShipmentDetails()->getAddress() . " ".$order->getShipmentDetails()->getAddress2());
+                    $sheet->setCellValueByColumnAndRow(6, $rowNo, $order->getShipmentDetails()->getPostalcode() . " ".$order->getShipmentDetails()->getCity());
+                }
+
+                foreach ($order->getLines() as $lineno => $line) {
+                    $sheet->setCellValueByColumnAndRow(7 + ($lineno * 2), $rowNo, $line->getAmount());
+                    $sheet->setCellValueByColumnAndRow(7 + ($lineno * 2) + 1, $rowNo, $line->getTitle());
+                    if ($lineno > $maxProductCount) {
+                        $maxProductCount = $lineno;
+                    }
+                }
+            }
+            for($a = 0; $a <= $maxProductCount; $a++) {
+                $sheet->getColumnDimensionByColumn(7 + ($a * 2))->setAutoSize(true);
+                $sheet->getColumnDimensionByColumn(7 + ($a * 2) + 1)->setAutoSize(true);
+            }
+            $sheet->calculateColumnWidths();
+
+            $objWriter = PHPExcel_IOFactory::createWriter($phpExcel, 'Excel5');
+
+            ob_start();
+            $objWriter->save('php://output');
+            $rawExcel = ob_get_clean();
+
+
+            $response = new StreamedResponse(function () use ($rawExcel) { echo $rawExcel;});
+
+            $response->headers->set('Content-Type', 'application/vnd.ms-excel');
+            $response->headers->set('Cache-Control', '');
+            $response->headers->set('Content-Length', strlen($rawExcel));
+            $response->headers->set('Last-Modified', gmdate('D, d M Y H:i:s'));
+            $contentDisposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'orders.xls');
+            $response->headers->set('Content-Disposition', $contentDisposition);
+            $response->prepare($request);
+
+            return $response;
+        }
 
         if ($request->isMethod("POST")) {
             /** @var PaymentService $paymentService */

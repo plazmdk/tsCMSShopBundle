@@ -10,7 +10,8 @@
         "tscms/system": "dev-master",
         "tscms/template": "dev-master",
         "tscms/filemanager": "dev-master",
-        "symfony/finder": "*"
+        "symfony/finder": "*",
+        "phpoffice/phpexcel": "^1.8"
     },
     "repositories": [
         {

@@ -28,6 +28,9 @@
             {{ form_end(filterForm) }}
         </div>
     </div>
+    <div class="text-right">
+        <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({'export':'true'})) }}" class="btn btn-primary right">Exportér til Excel</a>
+    </div>
     <form method="post">
         <table class="table table-hover">
             <thead>
