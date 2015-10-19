@@ -75,7 +75,7 @@ class OrderController extends Controller {
             $phpExcel = new \PHPExcel();
             $sheet = $phpExcel->getActiveSheet();
             $maxProductCount = 0;
-            foreach (["Ordrenr", "Navn", "Adresse","Postnr + by","Telefon","Leveringsadresse","Leverings postnr + by"] as $index => $column) {
+            foreach (["Ordrenr", "Navn", "Adresse","Postnr + by","Telefon","Leveringsadresse","Leverings postnr + by","Note"] as $index => $column) {
                 $sheet->setCellValueByColumnAndRow($index, 1, $column);
                 $sheet->getColumnDimensionByColumn($index)->setAutoSize(true);
             }
@@ -91,25 +91,26 @@ class OrderController extends Controller {
                     $sheet->setCellValueByColumnAndRow(5, $rowNo, $order->getShipmentDetails()->getAddress() . " ".$order->getShipmentDetails()->getAddress2());
                     $sheet->setCellValueByColumnAndRow(6, $rowNo, $order->getShipmentDetails()->getPostalcode() . " ".$order->getShipmentDetails()->getCity());
                 }
+                $sheet->setCellValueByColumnAndRow(7, $rowNo, $order->getNote());
 
                 foreach ($order->getLines() as $lineno => $line) {
-                    $sheet->setCellValueByColumnAndRow(7 + ($lineno * 3), $rowNo, $line->getAmount());
+                    $sheet->setCellValueByColumnAndRow(8 + ($lineno * 3), $rowNo, $line->getAmount());
                     if ($line instanceof ProductOrderLine) {
-                        $sheet->setCellValueByColumnAndRow(7 + ($lineno * 3) + 1, $rowNo, $line->getProduct()->getPartnumber());
+                        $sheet->setCellValueByColumnAndRow(8 + ($lineno * 3) + 1, $rowNo, $line->getProduct()->getPartnumber());
                     } else {
-                        $sheet->setCellValueByColumnAndRow(7 + ($lineno * 3) + 1, $rowNo, "-");
+                        $sheet->setCellValueByColumnAndRow(8 + ($lineno * 3) + 1, $rowNo, "-");
                     }
 
-                    $sheet->setCellValueByColumnAndRow(7 + ($lineno * 3) + 2, $rowNo, $line->getTitle());
+                    $sheet->setCellValueByColumnAndRow(8 + ($lineno * 3) + 2, $rowNo, $line->getTitle());
                     if ($lineno > $maxProductCount) {
                         $maxProductCount = $lineno;
                     }
                 }
             }
             for($a = 0; $a <= $maxProductCount; $a++) {
-                $sheet->getColumnDimensionByColumn(7 + ($a * 3))->setAutoSize(true);
-                $sheet->getColumnDimensionByColumn(7 + ($a * 3) + 1)->setAutoSize(true);
-                $sheet->getColumnDimensionByColumn(7 + ($a * 3) + 2)->setAutoSize(true);
+                $sheet->getColumnDimensionByColumn(8 + ($a * 3))->setAutoSize(true);
+                $sheet->getColumnDimensionByColumn(8 + ($a * 3) + 1)->setAutoSize(true);
+                $sheet->getColumnDimensionByColumn(8 + ($a * 3) + 2)->setAutoSize(true);
             }
             $sheet->calculateColumnWidths();
 
@@ -235,14 +236,6 @@ class OrderController extends Controller {
             return $this->redirect($this->generateUrl("tscms_shop_order_edit", array("id" => $order->getId())));
         }
 
-        // Order lines form - editing notes and lines of the order
-        $orderLinesForm = $this->createForm(new OrderLinesType(), $order);
-        $orderLinesForm->handleRequest($request);
-        if($orderLinesForm->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-            return $this->redirect($this->generateUrl("tscms_shop_order_edit", array("id" => $order->getId())));
-        }
-
         $sendEmailForm = $this->createForm(new SendEmailType($this->generateUrl("tscms_shop_order_sendconfirmationmail", array("id" => $order->getId()))));
 
 
@@ -250,7 +243,6 @@ class OrderController extends Controller {
             "orderStatusForm" => $orderStatusForm->createView(),
             "captureForm" => $captureForm->createView(),
             "orderCustomerDetailsForm" => $orderCustomerDetailsForm->createView(),
-            "orderLinesForm" => $orderLinesForm->createView(),
             "order" => $order,
             "sendConfirmationForm" => $sendEmailForm->createView()
         );

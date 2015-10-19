@@ -155,17 +155,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-12">
-                                {{ form_row(orderCustomerDetailsForm.save) }}
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    {{ form_end(orderCustomerDetailsForm) }}
-
-    {{ form_start(orderLinesForm) }}
         <div class="row">
             <div class="col-lg-6">
                 <div class="box">
@@ -182,15 +176,15 @@
                             </tr>
                             </thead>
                             <tbody style="overflow: hidden;">
-                            {% for widget in orderLinesForm.lines %}
+                            {% for widget in orderCustomerDetailsForm.lines %}
                                 {{ form_widget(widget) }}
                             {% endfor %}
-                            {% do orderLinesForm.lines.setRendered %}
+                            {% do orderCustomerDetailsForm.lines.setRendered %}
                             </tbody>
                             <tfoot>
                             <tr>
                                 <td colspan="5" class="createLineButtons">
-                                    {% for key,prototype in orderLinesForm.lines.vars.prototypes %}
+                                    {% for key,prototype in orderCustomerDetailsForm.lines.vars.prototypes %}
                                         <a href="#" data-line-prototype="{{ form_widget(prototype)|e }}" class="btn btn-warning">{{ ("orderlines." ~ key)|trans }}</a>
                                     {% endfor %}
                                 </td>
@@ -209,12 +203,12 @@
                         </table>
                         <div class="row">
                             <div class="col-lg-6">
-                                {{ form_row(orderLinesForm.note) }}
+                                {{ form_row(orderCustomerDetailsForm.note) }}
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-lg-12">
-                                {{ form_row(orderLinesForm.save) }}
+                                {{ form_row(orderCustomerDetailsForm.save) }}
                             </div>
                         </div>
                     </div>
@@ -222,7 +216,7 @@
             </div>
         </div>
 
-    {{ form_end(orderLinesForm) }}
+    {{ form_end(orderCustomerDetailsForm) }}
 {% endblock %}
 
 {% block javascripts %}
