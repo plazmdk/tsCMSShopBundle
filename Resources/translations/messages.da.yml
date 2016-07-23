@@ -202,8 +202,9 @@ paymentgateway:
     name: Quickpay
     description: Integration med Quickpay, dette åbner for betaling med de grænse betalingskort.
 
-    quickpayid: QuickpayId
-    quickpaysecret: MD5 Secret
+    quickpayid: Merchant Id
+    quickpayagreementid: Agreement Id
+    quickpaysecret: Secret
     quickpayapi: API key
     autocapture: Hæv pengene automatisk
     language: Gatewaysprog

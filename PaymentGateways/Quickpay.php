@@ -49,6 +49,10 @@ class Quickpay implements PaymentGatewayInterface
             "label" => "paymentgateway.quickpay.quickpayid",
             "required" => false
         ));
+        $formBuilder->add("QuickpayAgreement","text", array(
+            "label" => "paymentgateway.quickpay.quickpayagreementid",
+            "required" => false
+        ));
         $formBuilder->add("QuickpaySecret","text", array(
             "label" => "paymentgateway.quickpay.quickpaysecret",
             "required" => false
@@ -87,11 +91,11 @@ class Quickpay implements PaymentGatewayInterface
     public function getAuthorizeForm(FormBuilderInterface $formBuilder, PaymentAuthorize $authorize, Order $order)
     {
         $fields = array(
-            "protocol" => "7",
-            "msgtype" => $authorize->getSubscription() ? "subscribe" : "authorize",
-            "merchant" => $this->options['QuickpayID'],
+            "version" => "v10",
+            "merchant_id" => $this->options['QuickpayID'],
+            "agreement_id" => $this->options['QuickpayAgreement'],
             "language" => $this->options['language'],
-            "ordernumber" => str_pad($order->getId(), 4, "0",STR_PAD_LEFT),
+            "order_id" => str_pad($order->getId(), 4, "0",STR_PAD_LEFT),
             "amount" => $authorize->getAmount(),
             "currency" => $authorize->getCurrency(),
             "continueurl" => $authorize->getGatewayUrls()->getSuccessUrl(),
@@ -100,14 +104,16 @@ class Quickpay implements PaymentGatewayInterface
             "autocapture" => isset($this->options['autocapture']) && $this->options['autocapture'] == 1 ? 1 : 0
         );
 
-        $md5String = "";
-        foreach ($fields as $fieldValue) {
-            $md5String .= $fieldValue;
-        }
-        $md5String .= $this->options["QuickpaySecret"];
-        $fields["md5check"] = md5($md5String);
 
-        $formBuilder->setAction("https://secure.quickpay.dk/form/");
+        ksort($fields);
+        $values = array();
+        foreach ($fields as $fieldValue) {
+            $values[] = $fieldValue;
+        }
+        $secret = $this->options["QuickpaySecret"];
+        $fields["checksum"] = hash_hmac("sha256", implode(" ", $values), $secret);
+
+        $formBuilder->setAction("https://payment.quickpay.net");
         $formBuilder->setData($fields);
         foreach (array_keys($fields) as $name) {
             $formBuilder->add($name,"hidden");
@@ -134,35 +140,21 @@ class Quickpay implements PaymentGatewayInterface
             return $result;
         }
 
-        $data = array(
-            "protocol" => 7,
-            "msgtype" => "capture",
-            "merchant" => $this->options['QuickpayID'],
-            "amount" => $capture->getAmount(),
-            "transaction" => $transactionId,
-            "apikey" => $this->options['QuickpayAPI']
-        );
 
-        $data['md5check'] = md5(
-            $data['protocol'] .
-            $data['msgtype'] .
-            $data['merchant'] .
-            $data['amount'] .
-            $data['transaction'] .
-            $data['apikey'] .
-            $this->options['QuickpaySecret']
-        );
+        $curl = new CURL("https://api.quickpay.net/payments/".$transactionId."/capture");
+        $curl->header("Accept-Version","v10");
+        $curl->auth("",$this->options["QuickpayAPI"], "basic");
+        $curl->header("Accept","application/json");
+        $curl->header("Content-Type","application/json");
+        $response = $curl->post(json_encode(array("amount" => $capture->getAmount())));
 
-        $curl = new CURL("https://secure.quickpay.dk/api");
-        $response = $curl->params($data)->post();
-
-        $xml = simplexml_load_string($response);
-        $state = (string)current($xml->xpath("state"));
+        $data = json_decode($response);
+        $operation = $data->operations[0];
 
         $result = new PaymentResult();
         $result->setTransactionId($transactionId);
 
-        if ($state == 3) {
+        if ($operation->type == "capture") {
             $result->setType(PaymentResult::AUTHORIZE);
             $result->setCaptured(true);
         } else {
@@ -190,133 +182,92 @@ class Quickpay implements PaymentGatewayInterface
             }
         }
 
-        $data = array(
-            "protocol" => 7,
-            "msgtype" => "status",
-            "merchant" => $this->options['QuickpayID'],
-            "transaction" => $transactionId,
-            "apikey" => $this->options['QuickpayAPI']
-        );
+        if (!$transactionId) {
+            $result = new PaymentResult();
+            $result->setType(PaymentResult::ERROR);
+            $result->setCaptured(false);
+            $result->setMessage("Quickpay transaction id not found in history");
+            return $result;
+        }
 
-        $data['md5check'] = md5(
-            $data['protocol'] .
-            $data['msgtype'] .
-            $data['merchant'] .
-            $data['transaction'] .
-            $data['apikey'] .
-            $this->options['QuickpaySecret']
-        );
 
-        $curl = new CURL("https://secure.quickpay.dk/api");
-        $response = $curl->params($data)->post();
+        $curl = new CURL("https://api.quickpay.net/payments/".$transactionId);
+        $curl->header("Accept-Version","v10");
+        $curl->auth("",$this->options["QuickpayAPI"],"basic");
+        $curl->header("Accept","application/json");
+        $response = $curl->get();
+        $data = json_decode($response);
 
-        $xml = new SimpleXMLElement($response);
-        $state = $xml->state;
-
-        $status = null;
-        switch ($state) {
-            case 1:
+        $operation = $data->operations[count($data->operations) - 1];
+        $type = $operation->type;
+        switch ($type) {
+            case "authorize":
                 $status = PaymentStatus::AUTHORIZED;
                 break;
-            case 3:
+            case "capture":
                 $status = PaymentStatus::CAPTURED;
                 break;
-            case 7:
-                $status = PaymentStatus::REFUNDED;
-                break;
-            case 9:
-                $status = PaymentStatus::SUBSCRIBED;
-                break;
             default:
-                $status = PaymentStatus::UNKNOWN;
+                $status = PaymentResult::ERROR;
         }
 
         $authorizedAmount = 0;
         $capturedAmount = 0;
         $refundedAmount = 0;
-
-
-        foreach ($xml->history as $history) {
-            $msgtype = $history->msgtype;
-            $amount = $history->amount;
-            switch ($msgtype) {
-                case "authorize":
-                    $authorizedAmount += intval($amount);
-                    break;
-                case "capture":
-                    $capturedAmount += intval($amount);
-                    break;
-                case "refund":
-                    $refundedAmount += intval($amount);
-                    break;
+        foreach ($data->operations as $operation) {
+            if ($operation->type== "authorize") {
+                $authorizedAmount += $operation->amount;
+            } else if ($operation->type == "capture") {
+                $capturedAmount += $operation->amount;
+            } elseif ($operation->type== "refund") {
+                $refundedAmount += $operation->amount;
             }
         }
 
-
-        return new PaymentStatus($status,$authorizedAmount, $capturedAmount, $refundedAmount);
+        $response = new PaymentStatus($status, $authorizedAmount, $capturedAmount, $refundedAmount);
+        return $response;
     }
 
     public function callback(Order $order, Request $request)
     {
-        $params = $request->request->all();
-        $md5String = "";
-        if(isset($params["msgtype"])){$md5String .= $params["msgtype"]; }
-        if(isset($params["ordernumber"])){$md5String .= $params["ordernumber"]; }
-        if(isset($params["amount"])){$md5String .= $params["amount"]; }
-        if(isset($params["currency"])){$md5String .= $params["currency"]; }
-        if(isset($params["time"])){$md5String .= $params["time"]; }
-        if(isset($params["state"])){$md5String .= $params["state"]; }
-        if(isset($params["qpstat"])){$md5String .= $params["qpstat"]; }
-        if(isset($params["qpstatmsg"])){$md5String .= $params["qpstatmsg"]; }
-        if(isset($params["chstat"])){$md5String .= $params["chstat"]; }
-        if(isset($params["chstatmsg"])){$md5String .= $params["chstatmsg"]; }
-        if(isset($params["merchant"])){$md5String .= $params["merchant"]; }
-        if(isset($params["merchantemail"])){$md5String .= $params["merchantemail"]; }
-        if(isset($params["transaction"])){$md5String .= $params["transaction"]; }
-        if(isset($params["cardtype"])){$md5String .= $params["cardtype"]; }
-        if(isset($params["cardnumber"])){$md5String .= $params["cardnumber"]; }
-        if(isset($params["cardhash"])){$md5String .= $params["cardhash"]; }
-        if(isset($params["cardexpire"])){$md5String .= $params["cardexpire"]; }
-        if(isset($params["acquirer"])){$md5String .= $params["acquirer"]; }
-        if(isset($params["splitpayment"])){$md5String .= $params["splitpayment"]; }
-        if(isset($params["fraudprobability"])){$md5String .= $params["fraudprobability"]; }
-        if(isset($params["fraudremarks"])){$md5String .= $params["fraudremarks"]; }
-        if(isset($params["fraudreport"])){$md5String .= $params["fraudreport"]; }
-        if(isset($params["fee"])){$md5String .= $params["fee"]; }
-        if(isset($params["secret"])){ $md5String .= $params["secret"]; }
+        $headers = $request->headers->all();
+        $request_body = file_get_contents("php://input");
 
-        $md5 = md5($md5String);
-        if ($md5 == $params['md5check']) {
-            throw new \InvalidArgumentException("MD5 does not match");
+        $checksum = $headers["QuickPay-Checksum-Sha256"];
+        $hash = hash_hmac("sha256", $request_body, $this->options["QuickpaySecret"]);
+
+        if ($checksum == $hash) {
+            throw new \InvalidArgumentException("Checksum does not match");
         }
-
         $result = new PaymentResult();
 
-        $state = $params['state'];
-        switch ($state) {
-            case 1:
-            case 3:
+        $data = json_decode($request_body);
+        $operation = $data->operations[count($data->operations) - 1];
+        $type = $operation->type;
+        switch ($type) {
+            case "authorize":
                 $result->setType(PaymentResult::AUTHORIZE);
+                $result->setCaptured(false);
                 break;
-            case 7:
-                $result->setType(PaymentResult::REFUND);
-                break;
-            case 9:
-                $result->setType(PaymentResult::SUBSCRIPTION);
+            case "capture":
+                $result->setType(PaymentResult::AUTHORIZE);
+                $result->setCaptured(true);
                 break;
             default:
                 $result->setType(PaymentResult::ERROR);
         }
 
-        if ($state == 3) {
-            $result->setCaptured(true);
-        }
-
-        if ($params['amount'] != $order->getTotalVat()) {
+        $accepted = $data->accepted;
+        if (!$accepted) {
             $result->setType(PaymentResult::ERROR);
         }
 
-        $result->setTransactionId($params['transaction']);
+        if ($operation->amount != $order->getTotalVat()) {
+            $result->setType(PaymentResult::ERROR);
+        }
+
+        $result->setTransactionId($data->id);
+
 
         return $result;
     }
